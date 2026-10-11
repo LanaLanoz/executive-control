@@ -38,24 +38,14 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body { 
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-    background: var(--bg); 
-    color: var(--gray-900); 
-    min-height:100vh; 
-    font-size: 14px;
-    line-height: 1.5;
+    background: var(--bg); color: var(--gray-900); min-height:100vh; 
+    font-size: 14px; line-height: 1.5;
   }
 
   .header { 
     background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); 
-    color:#fff; 
-    padding: 20px 40px; 
-    display:flex; 
-    align-items:center; 
-    justify-content:space-between; 
-    box-shadow: var(--shadow-lg); 
-    position:sticky; 
-    top:0; 
-    z-index:100;
+    color:#fff; padding: 20px 40px; display:flex; align-items:center; justify-content:space-between; 
+    box-shadow: var(--shadow-lg); position:sticky; top:0; z-index:100;
     border-bottom: 1px solid rgba(255,255,255,.1);
   }
   .header-left { display: flex; align-items: center; gap: 16px; }
@@ -67,22 +57,15 @@
     display: flex; align-items: center; gap: 6px; font-size: 12px; opacity: .9;
     padding: 6px 12px; background: rgba(255,255,255,.1); border-radius: 6px;
   }
-  .sync-dot { 
-    width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
-    animation: pulse 2s infinite;
-  }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
   .sync-dot.syncing { background: #f59e0b; }
   .sync-dot.error { background: #dc2626; animation: none; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
 
-  .tabs { 
-    display:flex; gap: 4px; background: rgba(255,255,255,.1); 
-    border-radius: 8px; padding: 4px; backdrop-filter: blur(10px);
-  }
+  .tabs { display:flex; gap: 4px; background: rgba(255,255,255,.1); border-radius: 8px; padding: 4px; backdrop-filter: blur(10px); }
   .tab-btn { 
-    padding: 10px 24px; border:none; background:transparent; 
-    color:rgba(255,255,255,.8); font-size: 14px; font-weight: 500; 
-    cursor:pointer; border-radius: 6px; transition: all .2s;
+    padding: 10px 24px; border:none; background:transparent; color:rgba(255,255,255,.8); 
+    font-size: 14px; font-weight: 500; cursor:pointer; border-radius: 6px; transition: all .2s;
     display: flex; align-items: center; gap: 8px;
   }
   .tab-btn:hover { color:#fff; background:rgba(255,255,255,.15); }
@@ -90,9 +73,8 @@
   .tab-btn svg { width: 16px; height: 16px; }
 
   .settings-btn {
-    padding: 8px 16px; background: rgba(255,255,255,.15);
-    border: 1px solid rgba(255,255,255,.2); color: #fff;
-    border-radius: 6px; cursor: pointer; font-size: 13px;
+    padding: 8px 16px; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.2);
+    color: #fff; border-radius: 6px; cursor: pointer; font-size: 13px;
     display: flex; align-items: center; gap: 6px; transition: all .2s;
   }
   .settings-btn:hover { background: rgba(255,255,255,.25); }
@@ -103,10 +85,7 @@
   .tab-content.active { display:block; animation: fadeIn .3s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .kpi-grid { 
-    display: grid; grid-template-columns: repeat(8, 1fr); 
-    gap: 16px; margin-bottom: 32px;
-  }
+  .kpi-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px; margin-bottom: 32px; }
   @media (max-width: 1400px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
   @media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
   
@@ -121,6 +100,7 @@
   .kpi-card.overdue { border-left-color: var(--danger); }
   .kpi-card.done { border-left-color: var(--success); }
   .kpi-card.risk { border-left-color: var(--warning); }
+  .kpi-card.review { border-left-color: #f59e0b; }
   
   .kpi-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
   .kpi-icon { width: 20px; height: 20px; opacity: .7; }
@@ -129,6 +109,7 @@
   .kpi-card.overdue .kpi-value { color: var(--danger); }
   .kpi-card.done .kpi-value { color: var(--success); }
   .kpi-card.risk .kpi-value { color: var(--warning); }
+  .kpi-card.review .kpi-value { color: #f59e0b; }
 
   .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 32px; }
   @media (max-width: 1024px) { .charts-grid { grid-template-columns: 1fr; } }
@@ -174,7 +155,8 @@
   tr:hover { background: var(--gray-50); }
   tr.row-overdue { background: var(--danger-light); }
   tr.row-risk { background: var(--warning-light); }
-  tr.row-done { opacity: .6; }
+  tr.row-done { opacity: .7; background: var(--success-light); }
+  tr.row-review { background: #fef3c7; border-left: 3px solid #f59e0b; }
 
   .progress-bar { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
   .progress-track { width: 80px; height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
@@ -183,7 +165,8 @@
   .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
   .badge-new { background: var(--primary-light); color: var(--primary-dark); }
   .badge-progress { background: var(--info-light); color: #4338ca; }
-  .badge-review { background: var(--warning-light); color: #92400e; }
+  .badge-review { background: var(--warning-light); color: #92400e; border: 1px solid #f59e0b; animation: pulseBadge 2s infinite; }
+  @keyframes pulseBadge { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 50% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0); } }
   .badge-revision { background: #fce7f3; color: #9d174d; }
   .badge-done { background: var(--success-light); color: #166534; }
   .badge-cancelled { background: var(--gray-200); color: var(--gray-600); }
@@ -203,10 +186,17 @@
   .btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
   .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
   .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #15803d; }
   .btn-info { background: var(--info); color: #fff; }
   .btn-info:hover { background: #4f46e5; }
   .btn-outlook { background: #0078d4; color: #fff; }
   .btn-outlook:hover { background: #106ebe; }
+  .btn-accept { background: var(--success); color: #fff; }
+  .btn-accept:hover { background: #15803d; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2); }
+  .btn-reject { background: var(--danger); color: #fff; }
+  .btn-reject:hover { background: #b91c1c; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2); }
+  .btn-warning { background: var(--warning); color: #fff; }
+  .btn-warning:hover { background: #d97706; }
 
   .form-card { background: var(--card); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); max-width: 900px; }
   .form-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-200); }
@@ -216,6 +206,7 @@
   .form-group { display: flex; flex-direction: column; gap: 6px; }
   .form-group.full { grid-column: 1/-1; }
   .form-group label { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+  .form-group label .required { color: var(--danger); }
   .form-group input, .form-group select, .form-group textarea { padding: 10px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 14px; outline: none; font-family: inherit; transition: all .2s; }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
   .form-group textarea { resize: vertical; min-height: 100px; }
@@ -245,6 +236,7 @@
   .toast-success { background: var(--success); }
   .toast-error { background: var(--danger); }
   .toast-info { background: var(--info); }
+  .toast-warning { background: var(--warning); }
   @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
   .empty-state { text-align: center; padding: 80px 20px; color: var(--gray-500); }
@@ -267,6 +259,29 @@
   .settings-info { background: var(--info-light); border: 1px solid var(--info); border-radius: 6px; padding: 12px; font-size: 12px; color: var(--gray-700); margin-top: 8px; }
   .settings-info a { color: var(--primary); text-decoration: none; }
   .settings-info a:hover { text-decoration: underline; }
+
+  /* Accept/Reject Modal */
+  .accept-info { background: var(--gray-50); border-radius: 8px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--gray-200); }
+  .accept-info-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+  .accept-info-row:not(:last-child) { border-bottom: 1px dashed var(--gray-200); }
+  .accept-info-label { color: var(--gray-600); font-weight: 500; }
+  .accept-info-value { color: var(--gray-900); font-weight: 600; }
+
+  .accept-result-box { background: var(--success-light); border: 1px solid var(--success); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .accept-result-box h4 { color: #166534; font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .accept-result-box p { color: #166534; font-size: 13px; line-height: 1.5; }
+
+  .reject-reason { background: var(--danger-light); border: 1px solid var(--danger); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .reject-reason h4 { color: #991b1b; font-size: 13px; margin-bottom: 8px; }
+
+  /* History */
+  .history-list { margin-top: 12px; max-height: 200px; overflow-y: auto; }
+  .history-item { padding: 10px 12px; background: var(--gray-50); border-radius: 6px; margin-bottom: 6px; font-size: 12px; border-left: 3px solid var(--gray-300); }
+  .history-item.accept { border-left-color: var(--success); background: var(--success-light); }
+  .history-item.reject { border-left-color: var(--danger); background: var(--danger-light); }
+  .history-item.create { border-left-color: var(--primary); }
+  .history-item.change { border-left-color: var(--warning); }
+  .history-meta { color: var(--gray-500); font-size: 11px; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -290,6 +305,10 @@
   <symbol id="icon-settings" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></symbol>
   <symbol id="icon-sync" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></symbol>
   <symbol id="icon-outlook" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6.5V4h2v2.5h3L12 10l-4-3.5h3zM6.5 11H4v2h2.5v3L10 12l-3.5-4v3zM17.5 13H20v-2h-2.5V8L14 12l3.5 4v-3zM13 17.5h-2V20h2v-2.5L16 14l-4 3.5v0zM12 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></symbol>
+  <symbol id="icon-accept" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+  <symbol id="icon-reject" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></symbol>
+  <symbol id="icon-history" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></symbol>
+  <symbol id="icon-review" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></symbol>
 </svg>
 
 <div class="header">
@@ -392,9 +411,9 @@
           <option value="">Все статусы</option>
           <option value="Новое">Новое</option>
           <option value="В работе">В работе</option>
-          <option value="На проверке">На проверке</option>
+          <option value="На проверке">⚠ На проверке</option>
           <option value="На доработке">На доработке</option>
-          <option value="Выполнено">Выполнено</option>
+          <option value="Выполнено">✓ Выполнено</option>
           <option value="Отменено">Отменено</option>
           <option value="Просрочено">Просрочено</option>
         </select>
@@ -448,7 +467,7 @@
       <form id="orderForm" onsubmit="return saveOrder(event)">
         <div class="form-grid">
           <div class="form-group full">
-            <label>Текст поручения *</label>
+            <label>Текст поручения <span class="required">*</span></label>
             <textarea id="fText" required placeholder="Чётко сформулируйте ожидаемый результат..."></textarea>
           </div>
           <div class="form-group">
@@ -464,7 +483,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Приоритет *</label>
+            <label>Приоритет <span class="required">*</span></label>
             <select id="fPriority" required>
               <option value="Высокий">🔴 Высокий</option>
               <option value="Средний" selected>🟡 Средний</option>
@@ -472,11 +491,11 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Инициатор *</label>
+            <label>Инициатор <span class="required">*</span></label>
             <input type="text" id="fInitiator" required placeholder="ФИО">
           </div>
           <div class="form-group">
-            <label>Ответственный *</label>
+            <label>Ответственный <span class="required">*</span></label>
             <input type="text" id="fResponsible" required placeholder="ФИО">
           </div>
           <div class="form-group">
@@ -484,7 +503,7 @@
             <input type="text" id="fController" placeholder="ФИО">
           </div>
           <div class="form-group">
-            <label>Плановая дата выполнения *</label>
+            <label>Плановая дата выполнения <span class="required">*</span></label>
             <input type="date" id="fDeadline" required>
           </div>
           <div class="form-group full">
@@ -504,6 +523,7 @@
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
     <div class="modal-header">
@@ -514,7 +534,7 @@
       <h4>Подключение к GitHub</h4>
       <div class="form-grid">
         <div class="form-group full">
-          <label>Personal Access Token *</label>
+          <label>Personal Access Token <span class="required">*</span></label>
           <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
           <div class="settings-info">
             <strong>Как получить токен:</strong><br>
@@ -525,11 +545,11 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Имя пользователя *</label>
+          <label>Имя пользователя <span class="required">*</span></label>
           <input type="text" id="githubUser" placeholder="your-username">
         </div>
         <div class="form-group">
-          <label>Название репозитория *</label>
+          <label>Название репозитория <span class="required">*</span></label>
           <input type="text" id="githubRepo" placeholder="executive-control">
         </div>
         <div class="form-group full">
@@ -552,6 +572,7 @@
   </div>
 </div>
 
+<!-- EDIT MODAL -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-header">
@@ -616,6 +637,7 @@
   </div>
 </div>
 
+<!-- TASKS MODAL -->
 <div class="modal-overlay" id="tasksModal">
   <div class="modal modal-lg">
     <div class="modal-header">
@@ -647,6 +669,113 @@
   </div>
 </div>
 
+<!-- ACCEPT MODAL — ПРИЁМКА ВЫПОЛНЕНИЯ -->
+<div class="modal-overlay" id="acceptModal">
+  <div class="modal">
+    <div class="modal-header">
+      <svg class="modal-header-icon" style="color: var(--success);"><use href="#icon-accept"/></svg>
+      <h3 style="color: var(--success);">Приёмка выполнения <span id="acceptOrderId"></span></h3>
+    </div>
+    <input type="hidden" id="acceptIdx">
+    
+    <div class="accept-info" id="acceptInfo"></div>
+    
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Результат выполнения (отчёт исполнителя)</label>
+        <div class="accept-result-box" id="acceptResultBox">
+          <h4>
+            <svg style="width:16px; height:16px;"><use href="#icon-check"/></svg>
+            Отчёт исполнителя
+          </h4>
+          <p id="acceptResultText">—</p>
+        </div>
+      </div>
+      <div class="form-group full">
+        <label>Ваш комментарий при приёмке <span class="required">*</span></label>
+        <textarea id="acceptComment" placeholder="Например: Результат принят. Замечаний нет. / Принято с оговорками: ..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Принял (ФИО) <span class="required">*</span></label>
+        <input type="text" id="acceptBy" placeholder="ФИО принимающего" required>
+      </div>
+      <div class="form-group">
+        <label>Оценка качества</label>
+        <select id="acceptQuality">
+          <option value="Отлично">⭐ Отлично — выполнено в срок и качественно</option>
+          <option value="Хорошо" selected>✓ Хорошо — выполнено с небольшими замечаниями</option>
+          <option value="Удовлетворительно">⚠ Удовлетворительно — есть замечания</option>
+          <option value="Неудовлетворительно">✗ Неудовлетворительно — требуется переделка</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button class="btn btn-accept" onclick="confirmAccept()">
+        <svg><use href="#icon-accept"/></svg>
+        ✓ Принять и закрыть поручение
+      </button>
+      <button class="btn btn-outline" onclick="closeAcceptModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL — ОТКЛОНЕНИЕ -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal">
+    <div class="modal-header">
+      <svg class="modal-header-icon" style="color: var(--danger);"><use href="#icon-reject"/></svg>
+      <h3 style="color: var(--danger);">Отклонить выполнение <span id="rejectOrderId"></span></h3>
+    </div>
+    <input type="hidden" id="rejectIdx">
+    
+    <div class="reject-reason">
+      <h4>
+        <svg style="width:16px; height:16px;"><use href="#icon-alert"/></svg>
+        Поручение будет возвращено исполнителю на доработку
+      </h4>
+      <p style="font-size: 13px; color: #991b1b;">Исполнитель получит уведомление и обязан устранить замечания.</p>
+    </div>
+    
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Причина отклонения <span class="required">*</span></label>
+        <textarea id="rejectReason" placeholder="Чётко укажите, что именно не соответствует требованиям..." required style="min-height: 120px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Отклонил (ФИО) <span class="required">*</span></label>
+        <input type="text" id="rejectBy" placeholder="ФИО" required>
+      </div>
+      <div class="form-group">
+        <label>Новый срок (опционально)</label>
+        <input type="date" id="rejectNewDeadline">
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button class="btn btn-reject" onclick="confirmReject()">
+        <svg><use href="#icon-reject"/></svg>
+        ✗ Отклонить и вернуть на доработку
+      </button>
+      <button class="btn btn-outline" onclick="closeRejectModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL — ИСТОРИЯ ПОРУЧЕНИЯ -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <svg class="modal-header-icon"><use href="#icon-history"/></svg>
+      <h3>История поручения <span id="historyOrderId"></span></h3>
+    </div>
+    <div id="historyList" class="history-list"></div>
+    <div class="form-actions">
+      <button class="btn btn-outline" onclick="closeHistoryModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const GITHUB_CONFIG_KEY = 'github_config';
 let githubConfig = JSON.parse(localStorage.getItem(GITHUB_CONFIG_KEY) || 'null');
@@ -660,9 +789,7 @@ let fileSha = null;
 
 function save() { 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-  if (githubConfig && githubConfig.token) {
-    syncToGitHub();
-  }
+  if (githubConfig && githubConfig.token) syncToGitHub();
 }
 
 function genId() {
@@ -671,14 +798,15 @@ function genId() {
 }
 
 function today() { return new Date().toISOString().slice(0, 10); }
+function now() { return new Date().toISOString(); }
 
 function daysDiff(dateStr) {
   if (!dateStr) return null;
   const d = new Date(dateStr);
-  const now = new Date();
-  now.setHours(0,0,0,0);
+  const nowD = new Date();
+  nowD.setHours(0,0,0,0);
   d.setHours(0,0,0,0);
-  return Math.ceil((d - now) / 86400000);
+  return Math.ceil((d - nowD) / 86400000);
 }
 
 function isOverdue(o) {
@@ -691,13 +819,204 @@ function isRisk(o) {
 function getTaskProgress(o) {
   if (!o.tasks || o.tasks.length === 0) return { total: 0, completed: 0, percent: 0 };
   const completed = o.tasks.filter(t => t.completed).length;
-  return {
-    total: o.tasks.length,
-    completed: completed,
-    percent: Math.round((completed / o.tasks.length) * 100)
-  };
+  return { total: o.tasks.length, completed, percent: Math.round((completed / o.tasks.length) * 100) };
 }
 
+// ===================== ИСТОРИЯ ДЕЙСТВИЙ =====================
+function addHistory(order, action, user, comment = '', details = {}) {
+  if (!order.history) order.history = [];
+  order.history.push({
+    action,
+    user,
+    comment,
+    timestamp: now(),
+    details
+  });
+}
+
+// ===================== ПРИЁМКА ВЫПОЛНЕНИЯ =====================
+function openAcceptModal(idx) {
+  const o = orders[idx];
+  document.getElementById('acceptIdx').value = idx;
+  document.getElementById('acceptOrderId').textContent = o.id;
+  
+  // Информация о поручении
+  document.getElementById('acceptInfo').innerHTML = `
+    <div class="accept-info-row">
+      <span class="accept-info-label">Текст поручения:</span>
+      <span class="accept-info-value">${o.text}</span>
+    </div>
+    <div class="accept-info-row">
+      <span class="accept-info-label">Ответственный:</span>
+      <span class="accept-info-value">${o.responsible}</span>
+    </div>
+    <div class="accept-info-row">
+      <span class="accept-info-label">Срок:</span>
+      <span class="accept-info-value">${o.deadline}</span>
+    </div>
+    <div class="accept-info-row">
+      <span class="accept-info-label">Приоритет:</span>
+      <span class="accept-info-value">${o.priority}</span>
+    </div>
+    <div class="accept-info-row">
+      <span class="accept-info-label">Прогресс задач:</span>
+      <span class="accept-info-value">${getTaskProgress(o).completed} из ${getTaskProgress(o).total}</span>
+    </div>
+  `;
+  
+  // Результат исполнения (если есть)
+  const resultText = o.executionResult || o.comment || 'Исполнитель не предоставил отчёт о выполнении.';
+  document.getElementById('acceptResultText').textContent = resultText;
+  
+  // Сброс полей
+  document.getElementById('acceptComment').value = '';
+  document.getElementById('acceptBy').value = '';
+  document.getElementById('acceptQuality').value = 'Хорошо';
+  
+  document.getElementById('acceptModal').classList.add('show');
+}
+
+function closeAcceptModal() {
+  document.getElementById('acceptModal').classList.remove('show');
+}
+
+function confirmAccept() {
+  const idx = parseInt(document.getElementById('acceptIdx').value);
+  const comment = document.getElementById('acceptComment').value.trim();
+  const acceptBy = document.getElementById('acceptBy').value.trim();
+  const quality = document.getElementById('acceptQuality').value;
+  
+  if (!comment) {
+    toast('Укажите комментарий при приёмке', 'error');
+    return;
+  }
+  if (!acceptBy) {
+    toast('Укажите ФИО принявшего', 'error');
+    return;
+  }
+  
+  const o = orders[idx];
+  o.status = 'Выполнено';
+  o.actualDate = today();
+  o.acceptedDate = today();
+  o.acceptedBy = acceptBy;
+  o.acceptComment = comment;
+  o.quality = quality;
+  o.closedAt = now();
+  
+  addHistory(o, 'accept', acceptBy, comment, { quality });
+  
+  save();
+  closeAcceptModal();
+  renderRegistry();
+  renderDashboard();
+  toast(`✓ Поручение ${o.id} принято и закрыто. Оценка: ${quality}`, 'success');
+}
+
+// ===================== ОТКЛОНЕНИЕ =====================
+function openRejectModal(idx) {
+  const o = orders[idx];
+  document.getElementById('rejectIdx').value = idx;
+  document.getElementById('rejectOrderId').textContent = o.id;
+  document.getElementById('rejectReason').value = '';
+  document.getElementById('rejectBy').value = '';
+  document.getElementById('rejectNewDeadline').value = '';
+  document.getElementById('rejectModal').classList.add('show');
+}
+
+function closeRejectModal() {
+  document.getElementById('rejectModal').classList.remove('show');
+}
+
+function confirmReject() {
+  const idx = parseInt(document.getElementById('rejectIdx').value);
+  const reason = document.getElementById('rejectReason').value.trim();
+  const rejectBy = document.getElementById('rejectBy').value.trim();
+  const newDeadline = document.getElementById('rejectNewDeadline').value;
+  
+  if (!reason) {
+    toast('Укажите причину отклонения', 'error');
+    return;
+  }
+  if (!rejectBy) {
+    toast('Укажите ФИО отклонившего', 'error');
+    return;
+  }
+  
+  const o = orders[idx];
+  o.status = 'На доработке';
+  o.rejectReason = reason;
+  o.rejectedBy = rejectBy;
+  o.rejectedAt = now();
+  if (newDeadline) o.deadline = newDeadline;
+  
+  if (!o.rejections) o.rejections = [];
+  o.rejections.push({
+    by: rejectBy,
+    reason,
+    newDeadline,
+    timestamp: now()
+  });
+  
+  addHistory(o, 'reject', rejectBy, reason, { newDeadline });
+  
+  save();
+  closeRejectModal();
+  renderRegistry();
+  renderDashboard();
+  toast(`✗ Поручение ${o.id} отклонено и возвращено на доработку`, 'warning');
+}
+
+// ===================== ИСТОРИЯ =====================
+function openHistoryModal(idx) {
+  const o = orders[idx];
+  document.getElementById('historyOrderId').textContent = o.id;
+  
+  const history = o.history || [];
+  const container = document.getElementById('historyList');
+  
+  if (history.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:30px;">История пуста</p>';
+  } else {
+    container.innerHTML = history.slice().reverse().map(h => {
+      const actionMap = {
+        'create': { label: 'Создано', icon: 'icon-add', class: 'create' },
+        'change': { label: 'Изменено', icon: 'icon-edit', class: 'change' },
+        'accept': { label: 'Принято', icon: 'icon-accept', class: 'accept' },
+        'reject': { label: 'Отклонено', icon: 'icon-reject', class: 'reject' },
+        'status': { label: 'Смена статуса', icon: 'icon-sync', class: 'change' }
+      };
+      const a = actionMap[h.action] || { label: h.action, icon: 'icon-sync', class: 'change' };
+      const date = new Date(h.timestamp);
+      const dateStr = date.toLocaleString('ru-RU');
+      
+      return `
+        <div class="history-item ${a.class}">
+          <div style="display:flex; align-items:center; gap:8px; font-weight:600;">
+            <svg style="width:14px; height:14px;"><use href="#${a.icon}"/></svg>
+            ${a.label}
+          </div>
+          <div style="margin-top:4px; font-size:12px; color:var(--gray-700);">
+            ${h.comment || '—'}
+            ${h.details && h.details.quality ? `<br><strong>Оценка:</strong> ${h.details.quality}` : ''}
+            ${h.details && h.details.newDeadline ? `<br><strong>Новый срок:</strong> ${h.details.newDeadline}` : ''}
+          </div>
+          <div class="history-meta">
+            👤 ${h.user} • 🕐 ${dateStr}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  document.getElementById('historyModal').classList.add('show');
+}
+
+function closeHistoryModal() {
+  document.getElementById('historyModal').classList.remove('show');
+}
+
+// ===================== GITHUB SYNC =====================
 function setSyncStatus(status, text) {
   const dot = document.getElementById('syncDot');
   const textEl = document.getElementById('syncText');
@@ -707,83 +1026,37 @@ function setSyncStatus(status, text) {
 
 async function syncToGitHub() {
   if (!githubConfig || !githubConfig.token) return;
-  
   setSyncStatus('syncing', 'Сохранение...');
-  
   try {
     const { token, user, repo, filePath } = githubConfig;
-    
     let currentSha = null;
     try {
-      const getResponse = await fetch(
-        `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`,
-        { headers: { 'Authorization': `token ${token}` } }
-      );
-      
-      if (getResponse.ok) {
-        const getData = await getResponse.json();
-        currentSha = getData.sha;
-      } else if (getResponse.status === 404) {
-        console.log('Файл не найден, будет создан новый');
-      } else if (getResponse.status === 401) {
-        throw new Error('Неверный токен. Проверьте Personal Access Token.');
-      } else if (getResponse.status === 403) {
-        throw new Error('Доступ запрещён. Токен не имеет прав к этому репозиторию.');
-      } else {
-        throw new Error(`Ошибка GitHub: ${getResponse.status}`);
-      }
-    } catch (e) {
-      if (e.message.includes('Неверный') || e.message.includes('Доступ')) throw e;
-    }
+      const getResponse = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${filePath}`, { headers: { 'Authorization': `token ${token}` } });
+      if (getResponse.ok) { const getData = await getResponse.json(); currentSha = getData.sha; }
+      else if (getResponse.status === 404) { console.log('Файл не найден'); }
+      else if (getResponse.status === 401) throw new Error('Неверный токен');
+      else if (getResponse.status === 403) throw new Error('Доступ запрещён');
+    } catch (e) { if (e.message.includes('Неверный') || e.message.includes('Доступ')) throw e; }
     
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))));
+    const body = { message: `Update - ${new Date().toLocaleString('ru-RU')}`, content };
+    if (currentSha) body.sha = currentSha;
     
-    const body = {
-      message: `Update orders data - ${new Date().toLocaleString('ru-RU')}`,
-      content: content,
-    };
-    
-    if (currentSha) {
-      body.sha = currentSha;
-    }
-    
-    const response = await fetch(
-      `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Authorization': `token ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body)
-      }
-    );
+    const response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${filePath}`, {
+      method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
     
     if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error(
-          `Репозиторий не найден: ${user}/${repo}\n\n` +
-          `Проверьте:\n` +
-          `1. Правильность имени пользователя\n` +
-          `2. Правильность названия репозитория\n` +
-          `3. Что токен имеет доступ к этому репозиторию`
-        );
-      } else if (response.status === 401) {
-        throw new Error('Неверный токен доступа. Создайте новый токен.');
-      } else if (response.status === 403) {
-        throw new Error('Доступ запрещён. Убедитесь, что токен имеет права "repo".');
-      } else if (response.status === 422) {
-        throw new Error('Ошибка валидации. Возможно, файл был изменён в другом месте.');
-      }
-      throw new Error(`Ошибка GitHub: ${response.status}`);
+      if (response.status === 404) throw new Error(`Репозиторий не найден: ${user}/${repo}`);
+      if (response.status === 401) throw new Error('Неверный токен');
+      if (response.status === 403) throw new Error('Доступ запрещён');
+      throw new Error(`Ошибка: ${response.status}`);
     }
-    
     const data = await response.json();
     fileSha = data.content.sha;
-    
     setSyncStatus('', 'Синхронизировано');
     toast('✓ Данные сохранены в GitHub', 'success');
-    
   } catch (error) {
     console.error('Sync error:', error);
     setSyncStatus('error', 'Ошибка');
@@ -793,232 +1066,25 @@ async function syncToGitHub() {
 
 async function loadFromGitHub() {
   if (!githubConfig || !githubConfig.token) return;
-  
   setSyncStatus('syncing', 'Загрузка...');
-  
   try {
     const { token, user, repo, filePath } = githubConfig;
-    const url = `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`;
-    
-    const response = await fetch(url, {
-      headers: { 'Authorization': `token ${token}` }
-    });
-    
-    if (response.status === 404) {
-      setSyncStatus('', 'Готово (нет данных)');
-      toast('ℹ️ Файл данных не найден. Он будет создан при первом сохранении.', 'info');
-      return;
-    }
-    
-    if (response.status === 401) {
-      throw new Error('Неверный токен доступа');
-    }
-    
-    if (response.status === 403) {
-      throw new Error('Доступ запрещён. Проверьте права токена.');
-    }
-    
-    if (!response.ok) {
-      throw new Error(`Ошибка GitHub: ${response.status}`);
-    }
-    
+    const response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${filePath}`, { headers: { 'Authorization': `token ${token}` } });
+    if (response.status === 404) { setSyncStatus('', 'Готово (нет данных)'); return; }
+    if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
     const data = await response.json();
     fileSha = data.sha;
-    
     const content = decodeURIComponent(escape(atob(data.content)));
     orders = JSON.parse(content);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-    
     setSyncStatus('', 'Синхронизировано');
-    renderDashboard();
-    renderRegistry();
+    renderDashboard(); renderRegistry();
     toast('✓ Данные загружены из GitHub', 'success');
-    
   } catch (error) {
     console.error('Load error:', error);
     setSyncStatus('error', 'Ошибка');
     toast('❌ ' + error.message, 'error');
   }
-}
-
-async function testConnection() {
-  const token = document.getElementById('githubToken').value.trim();
-  const user = document.getElementById('githubUser').value.trim();
-  const repo = document.getElementById('githubRepo').value.trim();
-  const filePath = document.getElementById('githubFilePath').value.trim() || 'data.json';
-  
-  if (!token || !user || !repo) {
-    toast('Заполните все обязательные поля', 'error');
-    return;
-  }
-  
-  setSyncStatus('syncing', 'Проверка...');
-  let report = [];
-  
-  try {
-    const userResponse = await fetch(`https://api.github.com/users/${user}`, {
-      headers: { 'Authorization': `token ${token}` }
-    });
-    
-    if (userResponse.status === 401) {
-      throw new Error('❌ Неверный токен. Создайте новый на github.com/settings/tokens');
-    }
-    
-    if (userResponse.status === 404) {
-      throw new Error(`❌ Пользователь "${user}" не найден. Проверьте имя.`);
-    }
-    
-    if (!userResponse.ok) {
-      throw new Error(`Ошибка проверки пользователя: ${userResponse.status}`);
-    }
-    
-    const userData = await userResponse.json();
-    report.push(`✓ Пользователь: ${userData.login}`);
-    
-    const repoResponse = await fetch(`https://api.github.com/repos/${user}/${repo}`, {
-      headers: { 'Authorization': `token ${token}` }
-    });
-    
-    if (repoResponse.status === 404) {
-      throw new Error(
-        `❌ Репозиторий "${user}/${repo}" не найден.\n\n` +
-        `Создайте его: github.com/new\n` +
-        `Или проверьте правильность названия (учитывайте регистр!).`
-      );
-    }
-    
-    if (!repoResponse.ok) {
-      throw new Error(`Ошибка проверки репозитория: ${repoResponse.status}`);
-    }
-    
-    const repoData = await repoResponse.json();
-    report.push(`✓ Репозиторий: ${repoData.full_name} (${repoData.private ? 'приватный' : 'публичный'})`);
-    
-    const fileResponse = await fetch(
-      `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`,
-      { headers: { 'Authorization': `token ${token}` } }
-    );
-    
-    if (fileResponse.status === 404) {
-      report.push(`⚠ Файл "${filePath}" не найден. Будет создан автоматически.`);
-    } else if (fileResponse.ok) {
-      report.push(`✓ Файл "${filePath}" существует`);
-    } else {
-      report.push(`⚠ Ошибка проверки файла: ${fileResponse.status}`);
-    }
-    
-    setSyncStatus('', 'Подключено');
-    toast('✓ ' + report.join(' | '), 'success');
-    
-    githubConfig = { token, user, repo, filePath };
-    localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(githubConfig));
-    
-  } catch (error) {
-    setSyncStatus('error', 'Ошибка');
-    toast(error.message, 'error');
-  }
-}
-
-function exportToOutlook(idx, type = 'task') {
-  const o = orders[idx];
-  
-  if (type === 'task') {
-    exportAsTask(o);
-  } else {
-    exportAsEvent(o);
-  }
-}
-
-function exportAsTask(order) {
-  const dtStart = formatDateForICS(order.createdDate);
-  const dtDue = formatDateForICS(order.deadline);
-  
-  let description = `Поручение: ${order.id}\n`;
-  description += `Источник: ${order.source}\n`;
-  description += `Инициатор: ${order.initiator}\n`;
-  description += `Контролёр: ${order.controller || 'Не указан'}\n`;
-  description += `Приоритет: ${order.priority}\n`;
-  description += `Статус: ${order.status}\n\n`;
-  description += `Описание:\n${order.text}\n\n`;
-  if (order.comment) {
-    description += `Комментарий:\n${order.comment}\n`;
-  }
-  
-  const ics = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Executive Control//RU
-BEGIN:VTODO
-UID:${order.id}-${Date.now()}@executive-control
-DTSTAMP:${formatDateTimeForICS(new Date())}
-DTSTART:${dtStart}
-DUE:${dtDue}
-SUMMARY:${escapeICS(order.text)}
-DESCRIPTION:${escapeICS(description)}
-PRIORITY:${order.priority === 'Высокий' ? 1 : order.priority === 'Средний' ? 5 : 9}
-STATUS:${order.status === 'Выполнено' ? 'COMPLETED' : 'NEEDS-ACTION'}
-END:VTODO
-END:VCALENDAR`;
-
-  downloadICS(ics, `task_${order.id}.ics`);
-  toast('Задача экспортирована в Outlook', 'success');
-}
-
-function exportAsEvent(order) {
-  const dtStart = formatDateForICS(order.deadline) + 'T090000';
-  const dtEnd = formatDateForICS(order.deadline) + 'T100000';
-  
-  let description = `Поручение: ${order.id}\n`;
-  description += `Ответственный: ${order.responsible}\n`;
-  description += `Источник: ${order.source}\n`;
-  description += `Инициатор: ${order.initiator}\n`;
-  description += `Приоритет: ${order.priority}\n\n`;
-  description += `Описание:\n${order.text}\n`;
-  
-  const ics = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Executive Control//RU
-BEGIN:VEVENT
-UID:${order.id}-${Date.now()}@executive-control
-DTSTAMP:${formatDateTimeForICS(new Date())}
-DTSTART:${dtStart}
-DTEND:${dtEnd}
-SUMMARY:${escapeICS(order.text)}
-DESCRIPTION:${escapeICS(description)}
-PRIORITY:${order.priority === 'Высокий' ? 1 : order.priority === 'Средний' ? 5 : 9}
-END:VEVENT
-END:VCALENDAR`;
-
-  downloadICS(ics, `event_${order.id}.ics`);
-  toast('Событие экспортировано в Outlook', 'success');
-}
-
-function formatDateForICS(dateStr) {
-  const d = new Date(dateStr);
-  return d.getFullYear() + 
-         String(d.getMonth() + 1).padStart(2, '0') + 
-         String(d.getDate()).padStart(2, '0');
-}
-
-function formatDateTimeForICS(date) {
-  return date.getFullYear() + 
-         String(date.getMonth() + 1).padStart(2, '0') + 
-         String(date.getDate()).padStart(2, '0') + 'T' +
-         String(date.getHours()).padStart(2, '0') + 
-         String(date.getMinutes()).padStart(2, '0') + 
-         String(date.getSeconds()).padStart(2, '0');
-}
-
-function escapeICS(str) {
-  return str.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
-}
-
-function downloadICS(content, filename) {
-  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
 }
 
 function openSettings() {
@@ -1030,10 +1096,7 @@ function openSettings() {
   }
   document.getElementById('settingsModal').classList.add('show');
 }
-
-function closeSettings() {
-  document.getElementById('settingsModal').classList.remove('show');
-}
+function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
 
 function saveSettings() {
   githubConfig = {
@@ -1042,19 +1105,82 @@ function saveSettings() {
     repo: document.getElementById('githubRepo').value.trim(),
     filePath: document.getElementById('githubFilePath').value.trim() || 'data.json'
   };
-  
-  if (!githubConfig.token || !githubConfig.user || !githubConfig.repo) {
-    toast('Заполните все обязательные поля', 'error');
-    return;
-  }
-  
+  if (!githubConfig.token || !githubConfig.user || !githubConfig.repo) { toast('Заполните все поля', 'error'); return; }
   localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(githubConfig));
   closeSettings();
   toast('Настройки сохранены', 'success');
-  
   loadFromGitHub();
 }
 
+async function testConnection() {
+  const token = document.getElementById('githubToken').value.trim();
+  const user = document.getElementById('githubUser').value.trim();
+  const repo = document.getElementById('githubRepo').value.trim();
+  if (!token || !user || !repo) { toast('Заполните все поля', 'error'); return; }
+  setSyncStatus('syncing', 'Проверка...');
+  try {
+    const userResp = await fetch(`https://api.github.com/users/${user}`, { headers: { 'Authorization': `token ${token}` } });
+    if (userResp.status === 401) throw new Error('Неверный токен');
+    if (userResp.status === 404) throw new Error(`Пользователь "${user}" не найден`);
+    const repoResp = await fetch(`https://api.github.com/repos/${user}/${repo}`, { headers: { 'Authorization': `token ${token}` } });
+    if (repoResp.status === 404) throw new Error(`Репозиторий "${user}/${repo}" не найден`);
+    setSyncStatus('', 'Подключено');
+    toast('✓ Подключение успешно!', 'success');
+    githubConfig = { token, user, repo, filePath: document.getElementById('githubFilePath').value.trim() || 'data.json' };
+    localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(githubConfig));
+  } catch (error) {
+    setSyncStatus('error', 'Ошибка');
+    toast('❌ ' + error.message, 'error');
+  }
+}
+
+// ===================== OUTLOOK EXPORT =====================
+function exportToOutlook(idx, type = 'task') {
+  const o = orders[idx];
+  if (type === 'task') exportAsTask(o); else exportAsEvent(o);
+}
+
+function exportAsTask(order) {
+  const dtStart = formatDateForICS(order.createdDate);
+  const dtDue = formatDateForICS(order.deadline);
+  let description = `Поручение: ${order.id}\nИсточник: ${order.source}\nИнициатор: ${order.initiator}\n`;
+  description += `Контролёр: ${order.controller || 'Не указан'}\nПриоритет: ${order.priority}\nСтатус: ${order.status}\n\n`;
+  description += `Описание:\n${order.text}\n\n`;
+  if (order.acceptComment) description += `Комментарий приёмки:\n${order.acceptComment}\n`;
+  if (order.comment) description += `\nКомментарий:\n${order.comment}\n`;
+  
+  const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Executive Control//RU\nBEGIN:VTODO\nUID:${order.id}-${Date.now()}@executive-control\nDTSTAMP:${formatDateTimeForICS(new Date())}\nDTSTART:${dtStart}\nDUE:${dtDue}\nSUMMARY:${escapeICS(order.text)}\nDESCRIPTION:${escapeICS(description)}\nPRIORITY:${order.priority === 'Высокий' ? 1 : order.priority === 'Средний' ? 5 : 9}\nSTATUS:${order.status === 'Выполнено' ? 'COMPLETED' : 'NEEDS-ACTION'}\nEND:VTODO\nEND:VCALENDAR`;
+  downloadICS(ics, `task_${order.id}.ics`);
+  toast('Задача экспортирована в Outlook', 'success');
+}
+
+function exportAsEvent(order) {
+  const dtStart = formatDateForICS(order.deadline) + 'T090000';
+  const dtEnd = formatDateForICS(order.deadline) + 'T100000';
+  let description = `Поручение: ${order.id}\nОтветственный: ${order.responsible}\nИсточник: ${order.source}\nИнициатор: ${order.initiator}\nПриоритет: ${order.priority}\n\nОписание:\n${order.text}\n`;
+  const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Executive Control//RU\nBEGIN:VEVENT\nUID:${order.id}-${Date.now()}@executive-control\nDTSTAMP:${formatDateTimeForICS(new Date())}\nDTSTART:${dtStart}\nDTEND:${dtEnd}\nSUMMARY:${escapeICS(order.text)}\nDESCRIPTION:${escapeICS(description)}\nPRIORITY:${order.priority === 'Высокий' ? 1 : order.priority === 'Средний' ? 5 : 9}\nEND:VEVENT\nEND:VCALENDAR`;
+  downloadICS(ics, `event_${order.id}.ics`);
+  toast('Событие экспортировано в Outlook', 'success');
+}
+
+function formatDateForICS(dateStr) {
+  const d = new Date(dateStr);
+  return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+}
+function formatDateTimeForICS(date) {
+  return date.getFullYear() + String(date.getMonth() + 1).padStart(2, '0') + String(date.getDate()).padStart(2, '0') + 'T' + String(date.getHours()).padStart(2, '0') + String(date.getMinutes()).padStart(2, '0') + String(date.getSeconds()).padStart(2, '0');
+}
+function escapeICS(str) { return str.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;'); }
+function downloadICS(content, filename) {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ===================== TABS =====================
 function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['dashboard','registry','form'][i] === name));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1066,7 +1192,7 @@ function switchTab(name) {
 function toast(msg, type='success') {
   const el = document.createElement('div');
   el.className = 'toast toast-' + type;
-  el.innerHTML = `<svg><use href="#icon-${type === 'success' ? 'check' : type === 'error' ? 'alert' : 'sync'}"/></svg><span>${msg}</span>`;
+  el.innerHTML = `<svg><use href="#icon-${type === 'success' ? 'check' : type === 'error' ? 'alert' : type === 'warning' ? 'risk' : 'sync'}"/></svg><span>${msg}</span>`;
   document.getElementById('toasts').appendChild(el);
   setTimeout(() => el.remove(), 5000);
 }
@@ -1074,8 +1200,7 @@ function toast(msg, type='success') {
 function saveOrder(e) {
   e.preventDefault();
   const order = {
-    id: genId(),
-    createdDate: today(),
+    id: genId(), createdDate: today(), createdAt: now(),
     text: document.getElementById('fText').value.trim(),
     source: document.getElementById('fSource').value,
     initiator: document.getElementById('fInitiator').value.trim(),
@@ -1085,9 +1210,9 @@ function saveOrder(e) {
     priority: document.getElementById('fPriority').value,
     status: 'Новое',
     comment: document.getElementById('fComment').value.trim(),
-    actualDate: null,
-    tasks: []
+    actualDate: null, tasks: [], history: []
   };
+  addHistory(order, 'create', order.initiator, 'Поручение создано');
   orders.push(order);
   save();
   document.getElementById('orderForm').reset();
@@ -1130,23 +1255,72 @@ function renderRegistry() {
   const tbody = document.getElementById('registryBody');
   const empty = document.getElementById('emptyState');
 
-  if (filtered.length === 0) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
+  if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
   tbody.innerHTML = filtered.map((o, i) => {
     const days = daysDiff(o.deadline);
     const overdue = isOverdue(o);
     const risk = isRisk(o);
-    const rowClass = overdue ? 'row-overdue' : risk ? 'row-risk' : o.status === 'Выполнено' ? 'row-done' : '';
+    const rowClass = overdue ? 'row-overdue' : risk ? 'row-risk' : o.status === 'Выполнено' ? 'row-done' : o.status === 'На проверке' ? 'row-review' : '';
     const daysText = days !== null ? (days < 0 ? `<span style="color:var(--danger);font-weight:700">${days} дн.</span>` : days <= 3 ? `<span style="color:var(--warning);font-weight:600">${days} дн.</span>` : `${days} дн.`) : '—';
     const displayStatus = overdue ? 'Просрочено' : o.status;
     const idx = orders.indexOf(o);
     const progress = getTaskProgress(o);
     const hasTasks = progress.total > 0;
+    
+    // Кнопки действий в зависимости от статуса
+    let actionButtons = '';
+    
+    // Кнопка "Принять" — для статуса "На проверке" или "В работе"
+    if (o.status === 'На проверке' || o.status === 'В работе') {
+      actionButtons += `
+        <button class="btn btn-accept btn-sm" onclick="openAcceptModal(${idx})" title="Принять выполнение">
+          <svg><use href="#icon-accept"/></svg>
+          Принять
+        </button>
+      `;
+    }
+    
+    // Кнопка "Отклонить" — для статуса "На проверке"
+    if (o.status === 'На проверке') {
+      actionButtons += `
+        <button class="btn btn-reject btn-sm" onclick="openRejectModal(${idx})" title="Отклонить и вернуть на доработку">
+          <svg><use href="#icon-reject"/></svg>
+          Отклонить
+        </button>
+      `;
+    }
+    
+    // Кнопка "На проверку" — для статуса "В работе"
+    if (o.status === 'В работе') {
+      actionButtons += `
+        <button class="btn btn-warning btn-sm" onclick="markForReview(${idx})" title="Отправить на проверку">
+          <svg><use href="#icon-review"/></svg>
+          На проверку
+        </button>
+      `;
+    }
+    
+    // Стандартные кнопки
+    actionButtons += `
+      <button class="btn btn-outline btn-sm" onclick="openEdit(${idx})" title="Редактировать">
+        <svg><use href="#icon-edit"/></svg>
+      </button>
+      <button class="btn btn-info btn-sm" onclick="openTasksModal(${idx})" title="Задачи">
+        <svg><use href="#icon-tasks"/></svg>
+        ${hasTasks ? progress.total : 'Задачи'}
+      </button>
+      <button class="btn btn-outline btn-sm" onclick="openHistoryModal(${idx})" title="История">
+        <svg><use href="#icon-history"/></svg>
+      </button>
+      <button class="btn btn-outlook btn-sm" onclick="exportToOutlook(${idx}, 'task')" title="В Outlook (Задача)">
+        <svg><use href="#icon-outlook"/></svg>
+      </button>
+      <button class="btn btn-danger btn-sm" onclick="deleteOrder(${idx})" title="Удалить">
+        <svg><use href="#icon-delete"/></svg>
+      </button>
+    `;
 
     return `<tr class="${rowClass}">
       <td><strong>${o.id}</strong></td>
@@ -1169,28 +1343,22 @@ function renderRegistry() {
       </td>
       <td>${statusBadge(displayStatus)}</td>
       <td><span class="${priorityClass(o.priority)}">${o.priority}</span></td>
-      <td style="white-space:nowrap;">
-        <button class="btn btn-outline btn-sm" onclick="openEdit(${idx})" title="Редактировать">
-          <svg><use href="#icon-edit"/></svg>
-        </button>
-        <button class="btn btn-info btn-sm" onclick="openTasksModal(${idx})" title="Задачи">
-          <svg><use href="#icon-tasks"/></svg>
-          ${hasTasks ? progress.total : 'Задачи'}
-        </button>
-        <button class="btn btn-outlook btn-sm" onclick="exportToOutlook(${idx}, 'task')" title="Экспорт в Outlook (Задача)">
-          <svg><use href="#icon-outlook"/></svg>
-          Задача
-        </button>
-        <button class="btn btn-outlook btn-sm" onclick="exportToOutlook(${idx}, 'event')" title="Экспорт в Outlook (Событие)">
-          <svg><use href="#icon-outlook"/></svg>
-          Событие
-        </button>
-        <button class="btn btn-danger btn-sm" onclick="deleteOrder(${idx})" title="Удалить">
-          <svg><use href="#icon-delete"/></svg>
-        </button>
-      </td>
+      <td style="white-space:nowrap;">${actionButtons}</td>
     </tr>`;
   }).join('');
+}
+
+// Перевод в статус "На проверке"
+function markForReview(idx) {
+  const o = orders[idx];
+  if (!confirm(`Перевести поручение ${o.id} в статус "На проверке"?`)) return;
+  o.status = 'На проверке';
+  o.reviewAt = now();
+  addHistory(o, 'status', o.responsible, 'Поручение отправлено на проверку');
+  save();
+  renderRegistry();
+  renderDashboard();
+  toast(`⚠ Поручение ${o.id} отправлено на проверку`, 'info');
 }
 
 function sortTable(field) {
@@ -1226,6 +1394,7 @@ function closeModal() { document.getElementById('editModal').classList.remove('s
 function updateOrder(e) {
   e.preventDefault();
   const idx = parseInt(document.getElementById('eIdx').value);
+  const oldStatus = orders[idx].status;
   orders[idx].text = document.getElementById('eText').value.trim();
   orders[idx].responsible = document.getElementById('eResponsible').value.trim();
   orders[idx].controller = document.getElementById('eController').value.trim();
@@ -1235,6 +1404,11 @@ function updateOrder(e) {
   orders[idx].actualDate = document.getElementById('eActualDate').value || null;
   orders[idx].comment = document.getElementById('eComment').value.trim();
   if (orders[idx].status === 'Выполнено' && !orders[idx].actualDate) orders[idx].actualDate = today();
+  
+  if (oldStatus !== orders[idx].status) {
+    addHistory(orders[idx], 'change', orders[idx].controller || orders[idx].initiator, `Статус изменён: ${oldStatus} → ${orders[idx].status}`);
+  }
+  
   save();
   closeModal();
   renderRegistry();
@@ -1244,12 +1418,10 @@ function updateOrder(e) {
 
 function openTasksModal(idx) {
   currentTasksOrderId = idx;
-  const o = orders[idx];
-  document.getElementById('tasksOrderId').textContent = o.id;
+  document.getElementById('tasksOrderId').textContent = orders[idx].id;
   renderTasksList();
   document.getElementById('tasksModal').classList.add('show');
 }
-
 function closeTasksModal() {
   document.getElementById('tasksModal').classList.remove('show');
   currentTasksOrderId = null;
@@ -1261,12 +1433,10 @@ function closeTasksModal() {
 function renderTasksList() {
   const o = orders[currentTasksOrderId];
   const container = document.getElementById('tasksList');
-  
   if (!o.tasks || o.tasks.length === 0) {
-    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:30px;">Задач пока нет. Добавьте первую задачу ниже.</p>';
+    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:30px;">Задач пока нет.</p>';
     return;
   }
-
   container.innerHTML = o.tasks.map((task, i) => `
     <div class="task-item ${task.completed ? 'completed' : ''}">
       <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${i})">
@@ -1289,33 +1459,20 @@ function renderTasksList() {
 
 function addTask() {
   const text = document.getElementById('newTaskText').value.trim();
-  const assignee = document.getElementById('newTaskAssignee').value.trim();
-  const deadline = document.getElementById('newTaskDeadline').value;
-
-  if (!text) {
-    toast('Введите текст задачи', 'error');
-    return;
-  }
-
+  if (!text) { toast('Введите текст задачи', 'error'); return; }
   const o = orders[currentTasksOrderId];
   if (!o.tasks) o.tasks = [];
-  
   o.tasks.push({
-    text: text,
-    assignee: assignee,
-    deadline: deadline,
-    completed: false,
-    completedDate: null,
-    createdDate: today()
+    text,
+    assignee: document.getElementById('newTaskAssignee').value.trim(),
+    deadline: document.getElementById('newTaskDeadline').value,
+    completed: false, completedDate: null, createdDate: today()
   });
-
   save();
   renderTasksList();
-  
   document.getElementById('newTaskText').value = '';
   document.getElementById('newTaskAssignee').value = '';
   document.getElementById('newTaskDeadline').value = '';
-  
   toast('Задача добавлена');
 }
 
@@ -1330,8 +1487,7 @@ function toggleTask(taskIdx) {
 
 function deleteTask(taskIdx) {
   if (!confirm('Удалить задачу?')) return;
-  const o = orders[currentTasksOrderId];
-  o.tasks.splice(taskIdx, 1);
+  orders[currentTasksOrderId].tasks.splice(taskIdx, 1);
   save();
   renderTasksList();
   renderRegistry();
@@ -1343,11 +1499,11 @@ function renderDashboard() {
   const overdue = active.filter(o => daysDiff(o.deadline) < 0);
   const risk = active.filter(o => { const d = daysDiff(o.deadline); return d >= 0 && d <= 3; });
   const done = orders.filter(o => o.status === 'Выполнено');
+  const onReview = orders.filter(o => o.status === 'На проверке');
   const onTime = done.filter(o => o.actualDate && o.deadline && o.actualDate <= o.deadline);
   const discipline = done.length > 0 ? Math.round(onTime.length / done.length * 100) : 0;
 
-  let totalTasks = 0;
-  let completedTasks = 0;
+  let totalTasks = 0, completedTasks = 0;
   orders.forEach(o => {
     if (o.tasks) {
       totalTasks += o.tasks.length;
@@ -1357,60 +1513,36 @@ function renderDashboard() {
 
   document.getElementById('kpiGrid').innerHTML = `
     <div class="kpi-card total">
-      <div class="kpi-header">
-        <svg class="kpi-icon"><use href="#icon-total"/></svg>
-        <div class="kpi-label">Всего</div>
-      </div>
+      <div class="kpi-header"><svg class="kpi-icon"><use href="#icon-total"/></svg><div class="kpi-label">Всего</div></div>
       <div class="kpi-value">${orders.length}</div>
     </div>
     <div class="kpi-card progress">
-      <div class="kpi-header">
-        <svg class="kpi-icon"><use href="#icon-progress"/></svg>
-        <div class="kpi-label">В работе</div>
-      </div>
+      <div class="kpi-header"><svg class="kpi-icon"><use href="#icon-progress"/></svg><div class="kpi-label">В работе</div></div>
       <div class="kpi-value">${active.length}</div>
     </div>
+    <div class="kpi-card review">
+      <div class="kpi-header"><svg class="kpi-icon"><use href="#icon-review"/></svg><div class="kpi-label">На проверке</div></div>
+      <div class="kpi-value">${onReview.length}</div>
+    </div>
     <div class="kpi-card overdue">
-      <div class="kpi-header">
-        <svg class="kpi-icon"><use href="#icon-overdue"/></svg>
-        <div class="kpi-label">Просрочено</div>
-      </div>
+      <div class="kpi-header"><svg class="kpi-icon"><use href="#icon-overdue"/></svg><div class="kpi-label">Просрочено</div></div>
       <div class="kpi-value">${overdue.length}</div>
     </div>
     <div class="kpi-card risk">
-      <div class="kpi-header">
-        <svg class="kpi-icon"><use href="#icon-risk"/></svg>
-        <div class="kpi-label">Риск</div>
-      </div>
+      <div class="kpi-header"><svg class="kpi-icon"><use href="#icon-risk"/></svg><div class="kpi-label">Риск</div></div>
       <div class="kpi-value">${risk.length}</div>
     </div>
     <div class="kpi-card done">
-      <div class="kpi-header">
-        <svg class="kpi-icon"><use href="#icon-done"/></svg>
-        <div class="kpi-label">Выполнено</div>
-      </div>
+      <div class="kpi-header"><svg class="kpi-icon"><use href="#icon-done"/></svg><div class="kpi-label">Выполнено</div></div>
       <div class="kpi-value">${done.length}</div>
     </div>
     <div class="kpi-card done">
-      <div class="kpi-header">
-        <svg class="kpi-icon"><use href="#icon-check"/></svg>
-        <div class="kpi-label">Дисциплина</div>
-      </div>
+      <div class="kpi-header"><svg class="kpi-icon"><use href="#icon-check"/></svg><div class="kpi-label">Дисциплина</div></div>
       <div class="kpi-value">${discipline}%</div>
     </div>
     <div class="kpi-card total">
-      <div class="kpi-header">
-        <svg class="kpi-icon"><use href="#icon-tasks"/></svg>
-        <div class="kpi-label">Задач</div>
-      </div>
-      <div class="kpi-value">${totalTasks}</div>
-    </div>
-    <div class="kpi-card done">
-      <div class="kpi-header">
-        <svg class="kpi-icon"><use href="#icon-done"/></svg>
-        <div class="kpi-label">Задач ✓</div>
-      </div>
-      <div class="kpi-value">${completedTasks}</div>
+      <div class="kpi-header"><svg class="kpi-icon"><use href="#icon-tasks"/></svg><div class="kpi-label">Задач ✓</div></div>
+      <div class="kpi-value">${completedTasks}/${totalTasks}</div>
     </div>
   `;
 
@@ -1443,12 +1575,8 @@ function renderCharts() {
   });
 
   const statusColors = {'Новое':'#2563eb','В работе':'#6366f1','На проверке':'#f59e0b','На доработке':'#ec4899','Выполнено':'#16a34a','Отменено':'#9ca3af','Просрочено':'#dc2626'};
-
   renderDonutChart('chartStatus', statusCounts, statusColors);
-  
-  const priorityColors = {'Высокий':'#dc2626','Средний':'#f59e0b','Низкий':'#16a34a'};
-  renderDonutChart('chartPriority', priorityCounts, priorityColors);
-
+  renderDonutChart('chartPriority', priorityCounts, {'Высокий':'#dc2626','Средний':'#f59e0b','Низкий':'#16a34a'});
   renderBarChart('chartResponsible', respStats);
   renderHBarChart('chartSource', sourceCounts);
 }
@@ -1456,99 +1584,44 @@ function renderCharts() {
 function renderDonutChart(containerId, data, colors) {
   const container = document.getElementById(containerId);
   const total = Object.values(data).reduce((a, b) => a + b, 0);
-  if (total === 0) {
-    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>';
-    return;
-  }
-
+  if (total === 0) { container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>'; return; }
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
-  let offset = 0;
-  let segments = '';
-
+  let offset = 0, segments = '';
   Object.entries(data).forEach(([label, value]) => {
-    const percent = value / total;
-    const length = percent * circumference;
+    const length = (value / total) * circumference;
     const color = colors[label] || '#999';
     segments += `<circle cx="90" cy="90" r="${radius}" fill="none" stroke="${color}" stroke-width="25" stroke-dasharray="${length} ${circumference}" stroke-dashoffset="${-offset}" />`;
     offset += length;
   });
-
-  const legend = Object.entries(data).map(([label, value]) => {
-    const percent = Math.round(value / total * 100);
-    const color = colors[label] || '#999';
-    return `<div class="legend-item"><div class="legend-color" style="background:${color}"></div>${label}: ${value} (${percent}%)</div>`;
-  }).join('');
-
-  container.innerHTML = `
-    <div class="donut-chart">
-      <svg width="180" height="180">
-        ${segments}
-      </svg>
-      <div class="donut-center">
-        <div class="value">${total}</div>
-        <div class="label">всего</div>
-      </div>
-    </div>
-    <div class="donut-legend">${legend}</div>
-  `;
+  const legend = Object.entries(data).map(([label, value]) => `<div class="legend-item"><div class="legend-color" style="background:${colors[label]||'#999'}"></div>${label}: ${value} (${Math.round(value/total*100)}%)</div>`).join('');
+  container.innerHTML = `<div class="donut-chart"><svg width="180" height="180">${segments}</svg><div class="donut-center"><div class="value">${total}</div><div class="label">всего</div></div></div><div class="donut-legend">${legend}</div>`;
 }
 
 function renderBarChart(containerId, data) {
   const container = document.getElementById(containerId);
   const entries = Object.entries(data);
-  if (entries.length === 0) {
-    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>';
-    return;
-  }
-
-  const bars = entries.map(([label, stats]) => {
+  if (entries.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>'; return; }
+  container.innerHTML = `<div class="bar-chart">${entries.map(([label, stats]) => {
     const percent = stats.total > 0 ? Math.round(stats.onTime / stats.total * 100) : 0;
     const color = percent >= 80 ? '#16a34a' : percent >= 50 ? '#f59e0b' : '#dc2626';
-    return `
-      <div class="bar-item">
-        <div class="bar-label">${label}</div>
-        <div class="bar-container">
-          <div class="bar-fill" style="width:${percent}%;background:${color}">
-            <span class="bar-value">${percent}%</span>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  container.innerHTML = `<div class="bar-chart">${bars}</div>`;
+    return `<div class="bar-item"><div class="bar-label">${label}</div><div class="bar-container"><div class="bar-fill" style="width:${percent}%;background:${color}"><span class="bar-value">${percent}%</span></div></div></div>`;
+  }).join('')}</div>`;
 }
 
 function renderHBarChart(containerId, data) {
   const container = document.getElementById(containerId);
   const entries = Object.entries(data);
-  if (entries.length === 0) {
-    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>';
-    return;
-  }
-
+  if (entries.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>'; return; }
   const max = Math.max(...Object.values(data));
-  const bars = entries.map(([label, value]) => {
-    const percent = (value / max) * 100;
-    return `
-      <div class="h-bar-item">
-        <div class="h-bar-label">${label}</div>
-        <div class="h-bar-container">
-          <div class="h-bar-fill" style="width:${percent}%;background:#6366f1"></div>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  container.innerHTML = `<div class="h-bar-chart">${bars}</div>`;
+  container.innerHTML = `<div class="h-bar-chart">${entries.map(([label, value]) => `<div class="h-bar-item"><div class="h-bar-label">${label}</div><div class="h-bar-container"><div class="h-bar-fill" style="width:${(value/max)*100}%;background:#6366f1"></div></div></div>`).join('')}</div>`;
 }
 
 function exportCSV() {
-  const headers = ['ID','Дата','Текст','Источник','Инициатор','Ответственный','Контролёр','Срок','Статус','Приоритет','Кол-во задач','Выполнено задач','Комментарий'];
+  const headers = ['ID','Дата','Текст','Источник','Инициатор','Ответственный','Контролёр','Срок','Статус','Приоритет','Принято кем','Дата приёмки','Оценка качества','Кол-во задач','Выполнено задач','Комментарий'];
   const rows = orders.map(o => {
     const progress = getTaskProgress(o);
-    return [o.id, o.createdDate, `"${o.text}"`, o.source, o.initiator, o.responsible, o.controller, o.deadline, o.status, o.priority, progress.total, progress.completed, `"${o.comment}"`];
+    return [o.id, o.createdDate, `"${o.text}"`, o.source, o.initiator, o.responsible, o.controller, o.deadline, o.status, o.priority, o.acceptedBy||'', o.acceptedDate||'', o.quality||'', progress.total, progress.completed, `"${o.comment||''}"`];
   });
   const csv = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
@@ -1562,40 +1635,46 @@ function exportCSV() {
 function loadDemo() {
   if (orders.length > 0) return;
   const demo = [
-    {text:'Подготовить отчёт по результатам внутреннего аудита СМК',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Петров С.В.',controller:'Козлова Е.Н.',deadline:'2026-01-20',priority:'Высокий',status:'В работе',comment:'',tasks:[
-      {text:'Собрать данные по всем подразделениям',assignee:'Сидоров А.П.',deadline:'2026-01-15',completed:true,completedDate:'2026-01-14',createdDate:'2026-01-10'},
-      {text:'Подготовить сводную таблицу',assignee:'Петров С.В.',deadline:'2026-01-18',completed:false,completedDate:null,createdDate:'2026-01-10'},
-      {text:'Согласовать с Директором по качеству',assignee:'Козлова Е.Н.',deadline:'2026-01-19',completed:false,completedDate:null,createdDate:'2026-01-10'}
+    {text:'Подготовить отчёт по результатам внутреннего аудита СМК',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Петров С.В.',controller:'Козлова Е.Н.',deadline:'2026-01-20',priority:'Высокий',status:'На проверке',comment:'Отчёт подготовлен. Все разделы согласованы с руководителями подразделений. Выявлено 3 замечания, все устранены.',executionResult:'Отчёт подготовлен в полном объёме. Включает анализ 12 процессов, 3 замечания устранены.',tasks:[
+      {text:'Собрать данные по подразделениям',assignee:'Сидоров А.П.',deadline:'2026-01-15',completed:true,completedDate:'2026-01-14',createdDate:'2026-01-10'},
+      {text:'Подготовить сводную таблицу',assignee:'Петров С.В.',deadline:'2026-01-18',completed:true,completedDate:'2026-01-17',createdDate:'2026-01-10'}
+    ],history:[
+      {action:'create',user:'Иванова М.А.',comment:'Поручение создано',timestamp:'2026-01-10T09:00:00'},
+      {action:'status',user:'Петров С.В.',comment:'Поручение отправлено на проверку',timestamp:'2026-01-18T15:30:00'}
     ]},
-    {text:'Разработать корректирующее действие по несоответствию №2025-047',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Сидоров А.П.',controller:'Козлова Е.Н.',deadline:'2026-01-15',priority:'Высокий',status:'На проверке',comment:'Отчёт приложен',tasks:[
-      {text:'Провести анализ корневых причин',assignee:'Сидоров А.П.',deadline:'2026-01-12',completed:true,completedDate:'2026-01-11',createdDate:'2026-01-08'},
-      {text:'Разработать план мероприятий',assignee:'Сидоров А.П.',deadline:'2026-01-14',completed:true,completedDate:'2026-01-13',createdDate:'2026-01-08'}
-    ]},
-    {text:'Обновить процедуру управления документированной информацией',source:'Протокол совещания',initiator:'Директор',responsible:'Козлова Е.Н.',controller:'',deadline:'2026-02-01',priority:'Средний',status:'Новое',comment:'',tasks:[]},
-    {text:'Провести обучение сотрудников по новой версии ISO 9001:2015',source:'Проект',initiator:'Иванова М.А.',responsible:'Морозов Д.И.',controller:'Козлова Е.Н.',deadline:'2026-02-15',priority:'Средний',status:'В работе',comment:'',tasks:[
-      {text:'Подготовить учебные материалы',assignee:'Морозов Д.И.',deadline:'2026-02-01',completed:false,completedDate:null,createdDate:'2026-01-12'},
-      {text:'Согласовать программу обучения',assignee:'Козлова Е.Н.',deadline:'2026-02-05',completed:false,completedDate:null,createdDate:'2026-01-12'},
-      {text:'Провести обучение',assignee:'Морозов Д.И.',deadline:'2026-02-14',completed:false,completedDate:null,createdDate:'2026-01-12'}
-    ]},
-    {text:'Устранить замечания по пожарной безопасности (предписание №12)',source:'Входящий документ',initiator:'Директор',responsible:'Волков И.К.',controller:'',deadline:'2026-01-10',priority:'Высокий',status:'Выполнено',comment:'Все замечания устранены',actualDate:'2026-01-09',tasks:[
-      {text:'Заменить огнетушители',assignee:'Волков И.К.',deadline:'2026-01-08',completed:true,completedDate:'2026-01-07',createdDate:'2026-01-05'},
-      {text:'Обновить планы эвакуации',assignee:'Волков И.К.',deadline:'2026-01-09',completed:true,completedDate:'2026-01-08',createdDate:'2026-01-05'}
-    ]},
-    {text:'Подготовить презентацию для совета директоров по качеству',source:'Устное распоряжение',initiator:'Директор',responsible:'Петров С.В.',controller:'Иванова М.А.',deadline:'2026-01-25',priority:'Средний',status:'В работе',comment:'',tasks:[]},
-    {text:'Внедрить чек-лист входного контроля материалов',source:'Проект',initiator:'Иванова М.А.',responsible:'Новиков Р.С.',controller:'Козлова Е.Н.',deadline:'2026-03-01',priority:'Низкий',status:'Новое',comment:'',tasks:[]},
-    {text:'Проанализировать рекламации за 4 квартал 2025',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Сидоров А.П.',controller:'',deadline:'2026-01-18',priority:'Высокий',status:'Выполнено',comment:'Анализ проведён, 3 корневых причины выявлены',actualDate:'2026-01-20',tasks:[
-      {text:'Выгрузить данные из CRM',assignee:'Сидоров А.П.',deadline:'2026-01-15',completed:true,completedDate:'2026-01-14',createdDate:'2026-01-10'},
-      {text:'Провести классификацию рекламаций',assignee:'Сидоров А.П.',deadline:'2026-01-17',completed:true,completedDate:'2026-01-16',createdDate:'2026-01-10'},
-      {text:'Подготовить отчёт с выводами',assignee:'Сидоров А.П.',deadline:'2026-01-18',completed:true,completedDate:'2026-01-19',createdDate:'2026-01-10'}
-    ]},
+    {text:'Разработать корректирующее действие по несоответствию №2025-047',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Сидоров А.П.',controller:'Козлова Е.Н.',deadline:'2026-01-15',priority:'Высокий',status:'Выполнено',comment:'Отчёт приложен',
+      actualDate:'2026-01-14',acceptedBy:'Козлова Е.Н.',acceptedDate:'2026-01-14',acceptComment:'Результат принят. Корневые причины выявлены верно, план мероприятий реалистичный.',quality:'Отлично',
+      tasks:[{text:'Анализ корневых причин',assignee:'Сидоров А.П.',deadline:'2026-01-12',completed:true,completedDate:'2026-01-11',createdDate:'2026-01-08'}],
+      history:[
+        {action:'create',user:'Иванова М.А.',comment:'Поручение создано',timestamp:'2026-01-08T10:00:00'},
+        {action:'status',user:'Сидоров А.П.',comment:'Отправлено на проверку',timestamp:'2026-01-13T14:00:00'},
+        {action:'accept',user:'Козлова Е.Н.',comment:'Результат принят',timestamp:'2026-01-14T11:00:00',details:{quality:'Отлично'}}
+      ]},
+    {text:'Обновить процедуру управления документированной информацией',source:'Протокол совещания',initiator:'Директор',responsible:'Козлова Е.Н.',controller:'',deadline:'2026-02-01',priority:'Средний',status:'В работе',comment:'',tasks:[],history:[{action:'create',user:'Директор',comment:'Поручение создано',timestamp:'2026-01-12T09:00:00'}]},
+    {text:'Устранить замечания по пожарной безопасности',source:'Входящий документ',initiator:'Директор',responsible:'Волков И.К.',controller:'',deadline:'2026-01-10',priority:'Высокий',status:'Выполнено',comment:'Все замечания устранены',
+      actualDate:'2026-01-09',acceptedBy:'Директор',acceptedDate:'2026-01-09',acceptComment:'Замечания устранены в полном объёме. Проверка проведена.',quality:'Хорошо',
+      tasks:[],history:[
+        {action:'create',user:'Директор',comment:'Поручение создано',timestamp:'2026-01-05T08:00:00'},
+        {action:'accept',user:'Директор',comment:'Принято',timestamp:'2026-01-09T17:00:00',details:{quality:'Хорошо'}}
+      ]},
+    {text:'Проанализировать рекламации за 4 квартал 2025',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Сидоров А.П.',controller:'',deadline:'2026-01-18',priority:'Высокий',status:'На доработке',
+      comment:'Анализ требует доработки',executionResult:'Первичный анализ проведён',
+      rejectReason:'Не указаны корневые причины по 2 из 5 рекламаций. Требуется углубить анализ.',rejectedBy:'Иванова М.А.',rejectedAt:'2026-01-17T14:00:00',
+      rejections:[{by:'Иванова М.А.',reason:'Неполный анализ корневых причин',timestamp:'2026-01-17T14:00:00'}],
+      tasks:[],history:[
+        {action:'create',user:'Иванова М.А.',comment:'Поручение создано',timestamp:'2026-01-10T10:00:00'},
+        {action:'status',user:'Сидоров А.П.',comment:'Отправлено на проверку',timestamp:'2026-01-16T16:00:00'},
+        {action:'reject',user:'Иванова М.А.',comment:'Неполный анализ корневых причин',timestamp:'2026-01-17T14:00:00'}
+      ]}
   ];
   demo.forEach((d, i) => {
     orders.push({
       id: 'П-' + String(i+1).padStart(4,'0'),
-      createdDate: '2026-01-0' + (i < 9 ? i+1 : 9),
+      createdDate: '2026-01-' + String(i+5).padStart(2,'0'),
+      createdAt: '2026-01-' + String(i+5).padStart(2,'0') + 'T09:00:00',
       ...d,
-      actualDate: d.actualDate || null,
-      tasks: d.tasks || []
+      tasks: d.tasks || [],
+      history: d.history || []
     });
   });
   save();
@@ -1603,10 +1682,7 @@ function loadDemo() {
 
 loadDemo();
 renderDashboard();
-
-if (githubConfig && githubConfig.token) {
-  loadFromGitHub();
-}
+if (githubConfig && githubConfig.token) loadFromGitHub();
 </script>
 </body>
 </html>
