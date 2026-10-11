@@ -10,9 +10,9 @@
     "controller": "Тест",
     "deadline": "2026-10-11",
     "priority": "Низкий",
-    "status": "На проверке",
+    "status": "Выполнено",
     "comment": "",
-    "actualDate": null,
+    "actualDate": "2026-10-11",
     "tasks": [],
     "history": [
       {
@@ -35,8 +35,22 @@
         "comment": "Поручение отправлено на проверку",
         "timestamp": "2026-10-11T07:52:55.474Z",
         "details": {}
+      },
+      {
+        "action": "accept",
+        "user": "Я",
+        "comment": "принять",
+        "timestamp": "2026-10-11T07:53:23.160Z",
+        "details": {
+          "quality": "Хорошо"
+        }
       }
     ],
-    "reviewAt": "2026-10-11T07:52:55.474Z"
+    "reviewAt": "2026-10-11T07:52:55.474Z",
+    "acceptedDate": "2026-10-11",
+    "acceptedBy": "Я",
+    "acceptComment": "принять",
+    "quality": "Хорошо",
+    "closedAt": "2026-10-11T07:53:23.160Z"
   }
 ]
