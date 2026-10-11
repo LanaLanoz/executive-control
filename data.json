@@ -9,8 +9,8 @@
     "responsible": "Тест",
     "controller": "Тест",
     "deadline": "2026-10-11",
-    "priority": "Высокий",
-    "status": "Новое",
+    "priority": "Низкий",
+    "status": "В работе",
     "comment": "",
     "actualDate": null,
     "tasks": [],
@@ -20,6 +20,13 @@
         "user": "Тест",
         "comment": "Поручение создано",
         "timestamp": "2026-10-11T07:49:12.480Z",
+        "details": {}
+      },
+      {
+        "action": "change",
+        "user": "Тест",
+        "comment": "Статус изменён: Новое → В работе",
+        "timestamp": "2026-10-11T07:52:42.583Z",
         "details": {}
       }
     ]
