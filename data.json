@@ -10,7 +10,7 @@
     "controller": "Тест",
     "deadline": "2026-10-11",
     "priority": "Низкий",
-    "status": "В работе",
+    "status": "На проверке",
     "comment": "",
     "actualDate": null,
     "tasks": [],
@@ -28,7 +28,15 @@
         "comment": "Статус изменён: Новое → В работе",
         "timestamp": "2026-10-11T07:52:42.583Z",
         "details": {}
+      },
+      {
+        "action": "status",
+        "user": "Тест",
+        "comment": "Поручение отправлено на проверку",
+        "timestamp": "2026-10-11T07:52:55.474Z",
+        "details": {}
       }
-    ]
+    ],
+    "reviewAt": "2026-10-11T07:52:55.474Z"
   }
 ]
