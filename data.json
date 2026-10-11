@@ -13,20 +13,5 @@
     "comment": "Задача по объединению отчетов",
     "actualDate": null,
     "tasks": []
-  },
-  {
-    "id": "П-0002",
-    "createdDate": "2026-10-11",
-    "text": "Тест",
-    "source": "Аудит / Рекламация",
-    "initiator": "Лаптева Светлана",
-    "responsible": "Лаптева Светлана",
-    "controller": "Лаптева Светлана",
-    "deadline": "2026-10-23",
-    "priority": "Средний",
-    "status": "Новое",
-    "comment": "Тест",
-    "actualDate": null,
-    "tasks": []
   }
 ]
