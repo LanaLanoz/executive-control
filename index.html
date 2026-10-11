@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Control — Система контроля поручений</title>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-light: #dbeafe;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --warning: #f59e0b;
+    --warning-light: #fef3c7;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --info: #6366f1;
+    --info-light: #e0e7ff;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --radius: 8px;
+    --shadow-sm: 0 1px 2px 0 rgba(0,0,0,.05);
+    --shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+    background: var(--bg); 
+    color: var(--gray-900); 
+    min-height:100vh; 
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .header { 
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); 
+    color:#fff; 
+    padding: 20px 40px; 
+    display:flex; 
+    align-items:center; 
+    justify-content:space-between; 
+    box-shadow: var(--shadow-lg); 
+    position:sticky; 
+    top:0; 
+    z-index:100;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo-icon { width: 32px; height: 32px; }
+  .header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin: 0; }
+  .header-subtitle { font-size: 13px; opacity: .8; font-weight: 400; margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .sync-status { 
+    display: flex; align-items: center; gap: 6px; font-size: 12px; opacity: .9;
+    padding: 6px 12px; background: rgba(255,255,255,.1); border-radius: 6px;
+  }
+  .sync-dot { 
+    width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+    animation: pulse 2s infinite;
+  }
+  .sync-dot.syncing { background: #f59e0b; }
+  .sync-dot.error { background: #dc2626; animation: none; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+
+  .tabs { 
+    display:flex; gap: 4px; background: rgba(255,255,255,.1); 
+    border-radius: 8px; padding: 4px; backdrop-filter: blur(10px);
+  }
+  .tab-btn { 
+    padding: 10px 24px; border:none; background:transparent; 
+    color:rgba(255,255,255,.8); font-size: 14px; font-weight: 500; 
+    cursor:pointer; border-radius: 6px; transition: all .2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tab-btn:hover { color:#fff; background:rgba(255,255,255,.15); }
+  .tab-btn.active { background:#fff; color:var(--primary); font-weight: 600; box-shadow: var(--shadow-sm); }
+  .tab-btn svg { width: 16px; height: 16px; }
+
+  .settings-btn {
+    padding: 8px 16px; background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.2); color: #fff;
+    border-radius: 6px; cursor: pointer; font-size: 13px;
+    display: flex; align-items: center; gap: 6px; transition: all .2s;
+  }
+  .settings-btn:hover { background: rgba(255,255,255,.25); }
+  .settings-btn svg { width: 16px; height: 16px; }
+
+  .main { max-width: 1600px; margin:0 auto; padding: 32px 40px; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .kpi-grid { 
+    display: grid; grid-template-columns: repeat(8, 1fr); 
+    gap: 16px; margin-bottom: 32px;
+  }
+  @media (max-width: 1400px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  
+  .kpi-card { 
+    background: var(--card); border-radius: var(--radius); padding: 20px; 
+    box-shadow: var(--shadow); border-left: 3px solid var(--gray-300); 
+    transition: all .2s; position: relative; overflow: hidden;
+  }
+  .kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .kpi-card.total { border-left-color: var(--primary); }
+  .kpi-card.progress { border-left-color: var(--info); }
+  .kpi-card.overdue { border-left-color: var(--danger); }
+  .kpi-card.done { border-left-color: var(--success); }
+  .kpi-card.risk { border-left-color: var(--warning); }
+  
+  .kpi-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .kpi-icon { width: 20px; height: 20px; opacity: .7; }
+  .kpi-label { font-size: 12px; color: var(--gray-600); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+  .kpi-value { font-size: 28px; font-weight: 700; line-height: 1; letter-spacing: -0.5px; }
+  .kpi-card.overdue .kpi-value { color: var(--danger); }
+  .kpi-card.done .kpi-value { color: var(--success); }
+  .kpi-card.risk .kpi-value { color: var(--warning); }
+
+  .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 32px; }
+  @media (max-width: 1024px) { .charts-grid { grid-template-columns: 1fr; } }
+  .chart-card { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+  .chart-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-200); }
+  .chart-icon { width: 20px; height: 20px; color: var(--primary); }
+  .chart-card h3 { font-size: 15px; color: var(--gray-800); font-weight: 600; margin: 0; }
+
+  .donut-chart { position: relative; width: 180px; height: 180px; margin: 0 auto 20px; }
+  .donut-chart svg { transform: rotate(-90deg); }
+  .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .donut-center .value { font-size: 32px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+  .donut-center .label { font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+  .donut-legend { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-700); }
+  .legend-color { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  .bar-chart { display: flex; flex-direction: column; gap: 14px; }
+  .bar-item { display: flex; align-items: center; gap: 12px; }
+  .bar-label { min-width: 140px; font-size: 13px; color: var(--gray-700); font-weight: 500; }
+  .bar-container { flex: 1; height: 28px; background: var(--gray-100); border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; transition: width .5s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+  .bar-value { font-size: 12px; font-weight: 600; color: #fff; }
+
+  .h-bar-chart { display: flex; flex-direction: column; gap: 12px; }
+  .h-bar-item { display: flex; align-items: center; gap: 12px; }
+  .h-bar-label { min-width: 160px; font-size: 12px; color: var(--gray-700); text-align: right; font-weight: 500; }
+  .h-bar-container { flex: 1; height: 24px; background: var(--gray-100); border-radius: 6px; overflow: hidden; }
+  .h-bar-fill { height: 100%; border-radius: 6px; transition: width .5s ease; }
+
+  .table-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .table-toolbar { padding: 16px 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+  .table-toolbar input, .table-toolbar select { padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; outline: none; background: #fff; transition: all .2s; }
+  .table-toolbar input:focus, .table-toolbar select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+  .table-toolbar input { flex: 1; min-width: 240px; }
+  
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead { background: var(--gray-50); }
+  th { padding: 12px 16px; text-align: left; font-weight: 600; color: var(--gray-700); white-space: nowrap; border-bottom: 2px solid var(--gray-200); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; cursor: pointer; user-select: none; }
+  th:hover { background: var(--gray-100); }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+  tbody tr { transition: background .2s; }
+  tr:hover { background: var(--gray-50); }
+  tr.row-overdue { background: var(--danger-light); }
+  tr.row-risk { background: var(--warning-light); }
+  tr.row-done { opacity: .6; }
+
+  .progress-bar { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+  .progress-track { width: 80px; height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; transition: width .3s; border-radius: 4px; }
+
+  .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-new { background: var(--primary-light); color: var(--primary-dark); }
+  .badge-progress { background: var(--info-light); color: #4338ca; }
+  .badge-review { background: var(--warning-light); color: #92400e; }
+  .badge-revision { background: #fce7f3; color: #9d174d; }
+  .badge-done { background: var(--success-light); color: #166534; }
+  .badge-cancelled { background: var(--gray-200); color: var(--gray-600); }
+  .badge-overdue { background: #fecaca; color: #991b1b; }
+  
+  .priority-high { color: var(--danger); font-weight: 700; }
+  .priority-medium { color: var(--warning); font-weight: 600; }
+  .priority-low { color: var(--success); }
+
+  .btn { padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 6px; }
+  .btn svg { width: 16px; height: 16px; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); box-shadow: var(--shadow-md); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: #b91c1c; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-300); color: var(--gray-700); }
+  .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-info { background: var(--info); color: #fff; }
+  .btn-info:hover { background: #4f46e5; }
+  .btn-outlook { background: #0078d4; color: #fff; }
+  .btn-outlook:hover { background: #106ebe; }
+
+  .form-card { background: var(--card); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); max-width: 900px; }
+  .form-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-200); }
+  .form-header-icon { width: 24px; height: 24px; color: var(--primary); }
+  .form-card h2 { font-size: 20px; color: var(--gray-900); font-weight: 600; margin: 0; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1/-1; }
+  .form-group label { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+  .form-group input, .form-group select, .form-group textarea { padding: 10px 12px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 14px; outline: none; font-family: inherit; transition: all .2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-actions { margin-top: 24px; display: flex; gap: 12px; padding-top: 20px; border-top: 1px solid var(--gray-200); }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--card); border-radius: var(--radius); padding: 32px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+  .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-200); }
+  .modal-header-icon { width: 24px; height: 24px; color: var(--primary); }
+  .modal h3 { font-size: 18px; font-weight: 600; margin: 0; }
+  .modal-lg { max-width: 900px; }
+
+  .task-list { margin-top: 16px; }
+  .task-item { background: var(--gray-50); padding: 16px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--gray-200); transition: all .2s; }
+  .task-item:hover { border-color: var(--gray-300); box-shadow: var(--shadow-sm); }
+  .task-item.completed { opacity: 0.6; background: var(--success-light); border-color: var(--success); }
+  .task-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--success); }
+  .task-info { flex: 1; }
+  .task-title { font-weight: 600; font-size: 14px; color: var(--gray-900); }
+  .task-meta { font-size: 12px; color: var(--gray-600); margin-top: 4px; display: flex; gap: 12px; }
+  .task-actions { display: flex; gap: 6px; }
+
+  .toast-container { position: fixed; top: 100px; right: 32px; z-index: 300; display: flex; flex-direction: column; gap: 10px; max-width: 500px; }
+  .toast { padding: 14px 20px; border-radius: 8px; color: #fff; font-size: 14px; font-weight: 500; box-shadow: var(--shadow-lg); animation: slideIn .3s ease; display: flex; align-items: flex-start; gap: 10px; white-space: pre-wrap; word-wrap: break-word; }
+  .toast svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+  .toast-success { background: var(--success); }
+  .toast-error { background: var(--danger); }
+  .toast-info { background: var(--info); }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  .empty-state { text-align: center; padding: 80px 20px; color: var(--gray-500); }
+  .empty-state svg { width: 80px; height: 80px; margin-bottom: 20px; opacity: .3; }
+  .empty-state p { font-size: 16px; font-weight: 500; }
+
+  @media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; gap: 16px; padding: 16px 20px; }
+    .main { padding: 20px; }
+    .table-toolbar { flex-direction: column; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 10px; }
+  }
+
+  .table-wrap { overflow-x: auto; }
+
+  .settings-section { margin-bottom: 24px; }
+  .settings-section h4 { font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 12px; }
+  .settings-info { background: var(--info-light); border: 1px solid var(--info); border-radius: 6px; padding: 12px; font-size: 12px; color: var(--gray-700); margin-top: 8px; }
+  .settings-info a { color: var(--primary); text-decoration: none; }
+  .settings-info a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="icon-dashboard" viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></symbol>
+  <symbol id="icon-registry" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></symbol>
+  <symbol id="icon-add" viewBox="0 0 24 24"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></symbol>
+  <symbol id="icon-total" viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></symbol>
+  <symbol id="icon-progress" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></symbol>
+  <symbol id="icon-overdue" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></symbol>
+  <symbol id="icon-done" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+  <symbol id="icon-risk" viewBox="0 0 24 24"><path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></symbol>
+  <symbol id="icon-tasks" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z"/></symbol>
+  <symbol id="icon-edit" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></symbol>
+  <symbol id="icon-delete" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></symbol>
+  <symbol id="icon-export" viewBox="0 0 24 24"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24"><path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></symbol>
+  <symbol id="icon-settings" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></symbol>
+  <symbol id="icon-sync" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></symbol>
+  <symbol id="icon-outlook" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6.5V4h2v2.5h3L12 10l-4-3.5h3zM6.5 11H4v2h2.5v3L10 12l-3.5-4v3zM17.5 13H20v-2h-2.5V8L14 12l3.5 4v-3zM13 17.5h-2V20h2v-2.5L16 14l-4 3.5v0zM12 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></symbol>
+</svg>
+
+<div class="header">
+  <div class="header-left">
+    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <div>
+      <h1>Executive Control</h1>
+      <div class="header-subtitle">Система контроля поручений</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="sync-status" id="syncStatus">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncText">Готово</span>
+    </div>
+    <button class="settings-btn" onclick="openSettings()">
+      <svg><use href="#icon-settings"/></svg>
+      Настройки GitHub
+    </button>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('dashboard')">
+        <svg><use href="#icon-dashboard"/></svg>
+        Дашборд
+      </button>
+      <button class="tab-btn" onclick="switchTab('registry')">
+        <svg><use href="#icon-registry"/></svg>
+        Реестр
+      </button>
+      <button class="tab-btn" onclick="switchTab('form')">
+        <svg><use href="#icon-add"/></svg>
+        Новое поручение
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<div class="main">
+  <div class="tab-content active" id="tab-dashboard">
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <svg class="chart-icon"><use href="#icon-registry"/></svg>
+          <h3>Распределение по статусам</h3>
+        </div>
+        <div id="chartStatus"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <svg class="chart-icon"><use href="#icon-risk"/></svg>
+          <h3>По приоритетам</h3>
+        </div>
+        <div id="chartPriority"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <svg class="chart-icon"><use href="#icon-tasks"/></svg>
+          <h3>Исполнительская дисциплина</h3>
+        </div>
+        <div id="chartResponsible"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <svg class="chart-icon"><use href="#icon-total"/></svg>
+          <h3>По источникам</h3>
+        </div>
+        <div id="chartSource"></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div style="padding:20px 24px; border-bottom:1px solid var(--gray-200); background:var(--gray-50);">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <svg style="width:20px; height:20px; color:var(--danger);"><use href="#icon-alert"/></svg>
+          <h3 style="font-size:16px; color:var(--gray-800); font-weight:600; margin:0;">Просроченные и в зоне риска</h3>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Текст</th><th>Ответственный</th><th>Срок</th><th>Дней</th><th>Статус</th><th>Приоритет</th></tr>
+          </thead>
+          <tbody id="riskTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-registry">
+    <div class="table-card">
+      <div class="table-toolbar">
+        <div style="position:relative; flex:1; min-width:240px;">
+          <svg style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--gray-400);"><use href="#icon-search"/></svg>
+          <input type="text" id="searchInput" placeholder="Поиск по тексту, ID, ответственному..." oninput="renderRegistry()" style="padding-left:36px;">
+        </div>
+        <select id="filterStatus" onchange="renderRegistry()">
+          <option value="">Все статусы</option>
+          <option value="Новое">Новое</option>
+          <option value="В работе">В работе</option>
+          <option value="На проверке">На проверке</option>
+          <option value="На доработке">На доработке</option>
+          <option value="Выполнено">Выполнено</option>
+          <option value="Отменено">Отменено</option>
+          <option value="Просрочено">Просрочено</option>
+        </select>
+        <select id="filterPriority" onchange="renderRegistry()">
+          <option value="">Все приоритеты</option>
+          <option value="Высокий">Высокий</option>
+          <option value="Средний">Средний</option>
+          <option value="Низкий">Низкий</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()">
+          <svg><use href="#icon-export"/></svg>
+          Экспорт CSV
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortTable('id')">ID ⇅</th>
+              <th onclick="sortTable('createdDate')">Дата ⇅</th>
+              <th onclick="sortTable('text')">Текст поручения</th>
+              <th>Источник</th>
+              <th onclick="sortTable('responsible')">Ответственный ⇅</th>
+              <th>Контролёр</th>
+              <th onclick="sortTable('deadline')">Срок ⇅</th>
+              <th>Дней</th>
+              <th>Прогресс</th>
+              <th>Статус</th>
+              <th onclick="sortTable('priority')">Приоритет ⇅</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="registryBody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty-state" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <p>Поручений пока нет. Создайте первое!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-form">
+    <div class="form-card">
+      <div class="form-header">
+        <svg class="form-header-icon"><use href="#icon-add"/></svg>
+        <h2>Новое поручение</h2>
+      </div>
+      <form id="orderForm" onsubmit="return saveOrder(event)">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Текст поручения *</label>
+            <textarea id="fText" required placeholder="Чётко сформулируйте ожидаемый результат..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Источник</label>
+            <select id="fSource">
+              <option>Протокол совещания</option>
+              <option>Входящий документ</option>
+              <option>Устное распоряжение</option>
+              <option>Аудит / Рекламация</option>
+              <option>Стратегическая программа</option>
+              <option>Проект</option>
+              <option>Другое</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Приоритет *</label>
+            <select id="fPriority" required>
+              <option value="Высокий">🔴 Высокий</option>
+              <option value="Средний" selected>🟡 Средний</option>
+              <option value="Низкий">🟢 Низкий</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Инициатор *</label>
+            <input type="text" id="fInitiator" required placeholder="ФИО">
+          </div>
+          <div class="form-group">
+            <label>Ответственный *</label>
+            <input type="text" id="fResponsible" required placeholder="ФИО">
+          </div>
+          <div class="form-group">
+            <label>Контролёр</label>
+            <input type="text" id="fController" placeholder="ФИО">
+          </div>
+          <div class="form-group">
+            <label>Плановая дата выполнения *</label>
+            <input type="date" id="fDeadline" required>
+          </div>
+          <div class="form-group full">
+            <label>Комментарий</label>
+            <textarea id="fComment" placeholder="Дополнительная информация..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <svg><use href="#icon-check"/></svg>
+            Создать поручение
+          </button>
+          <button type="reset" class="btn btn-outline">Очистить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <svg class="modal-header-icon"><use href="#icon-settings"/></svg>
+      <h3>Настройки GitHub</h3>
+    </div>
+    <div class="settings-section">
+      <h4>Подключение к GitHub</h4>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Personal Access Token *</label>
+          <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <div class="settings-info">
+            <strong>Как получить токен:</strong><br>
+            1. Зайдите в <a href="https://github.com/settings/tokens" target="_blank">GitHub → Settings → Developer settings → Personal access tokens</a><br>
+            2. Нажмите "Generate new token (classic)"<br>
+            3. Выберите права: <strong>repo</strong><br>
+            4. Скопируйте токен и вставьте сюда
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Имя пользователя *</label>
+          <input type="text" id="githubUser" placeholder="your-username">
+        </div>
+        <div class="form-group">
+          <label>Название репозитория *</label>
+          <input type="text" id="githubRepo" placeholder="executive-control">
+        </div>
+        <div class="form-group full">
+          <label>Путь к файлу данных</label>
+          <input type="text" id="githubFilePath" value="data.json" placeholder="data.json">
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="saveSettings()">
+        <svg><use href="#icon-check"/></svg>
+        Сохранить настройки
+      </button>
+      <button class="btn btn-success" onclick="testConnection()">
+        <svg><use href="#icon-sync"/></svg>
+        Проверить подключение
+      </button>
+      <button class="btn btn-outline" onclick="closeSettings()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <svg class="modal-header-icon"><use href="#icon-edit"/></svg>
+      <h3>Редактирование поручения <span id="editId"></span></h3>
+    </div>
+    <form id="editForm" onsubmit="return updateOrder(event)">
+      <input type="hidden" id="eIdx">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Текст поручения</label>
+          <textarea id="eText" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Ответственный</label>
+          <input type="text" id="eResponsible" required>
+        </div>
+        <div class="form-group">
+          <label>Контролёр</label>
+          <input type="text" id="eController">
+        </div>
+        <div class="form-group">
+          <label>Плановая дата</label>
+          <input type="date" id="eDeadline" required>
+        </div>
+        <div class="form-group">
+          <label>Приоритет</label>
+          <select id="ePriority">
+            <option value="Высокий">🔴 Высокий</option>
+            <option value="Средний">🟡 Средний</option>
+            <option value="Низкий">🟢 Низкий</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Статус</label>
+          <select id="eStatus">
+            <option>Новое</option>
+            <option>В работе</option>
+            <option>На проверке</option>
+            <option>На доработке</option>
+            <option>Выполнено</option>
+            <option>Отменено</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Фактическая дата</label>
+          <input type="date" id="eActualDate">
+        </div>
+        <div class="form-group full">
+          <label>Комментарий</label>
+          <textarea id="eComment"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <svg><use href="#icon-check"/></svg>
+          Сохранить
+        </button>
+        <button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="tasksModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <svg class="modal-header-icon"><use href="#icon-tasks"/></svg>
+      <h3>Задачи поручения <span id="tasksOrderId"></span></h3>
+    </div>
+    <div id="tasksList" class="task-list"></div>
+    <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--gray-200);">
+      <h4 style="font-size:15px; margin-bottom:16px; color:var(--gray-800); font-weight:600;">Добавить новую задачу</h4>
+      <div class="form-grid">
+        <div class="form-group full">
+          <input type="text" id="newTaskText" placeholder="Текст задачи...">
+        </div>
+        <div class="form-group">
+          <input type="text" id="newTaskAssignee" placeholder="Ответственный за задачу">
+        </div>
+        <div class="form-group">
+          <input type="date" id="newTaskDeadline">
+        </div>
+      </div>
+      <div style="margin-top:16px; display:flex; gap:10px;">
+        <button class="btn btn-primary" onclick="addTask()">
+          <svg><use href="#icon-add"/></svg>
+          Добавить задачу
+        </button>
+        <button class="btn btn-outline" onclick="closeTasksModal()">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GITHUB_CONFIG_KEY = 'github_config';
+let githubConfig = JSON.parse(localStorage.getItem(GITHUB_CONFIG_KEY) || 'null');
+
+const STORAGE_KEY = 'exec_control_orders';
+let orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let sortField = 'createdDate';
+let sortDir = -1;
+let currentTasksOrderId = null;
+let fileSha = null;
+
+function save() { 
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+  if (githubConfig && githubConfig.token) {
+    syncToGitHub();
+  }
+}
+
+function genId() {
+  const n = orders.length + 1;
+  return 'П-' + String(n).padStart(4, '0');
+}
+
+function today() { return new Date().toISOString().slice(0, 10); }
+
+function daysDiff(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  return Math.ceil((d - now) / 86400000);
+}
+
+function isOverdue(o) {
+  return !['Выполнено','Отменено'].includes(o.status) && daysDiff(o.deadline) < 0;
+}
+function isRisk(o) {
+  return !['Выполнено','Отменено'].includes(o.status) && daysDiff(o.deadline) >= 0 && daysDiff(o.deadline) <= 3;
+}
+
+function getTaskProgress(o) {
+  if (!o.tasks || o.tasks.length === 0) return { total: 0, completed: 0, percent: 0 };
+  const completed = o.tasks.filter(t => t.completed).length;
+  return {
+    total: o.tasks.length,
+    completed: completed,
+    percent: Math.round((completed / o.tasks.length) * 100)
+  };
+}
+
+function setSyncStatus(status, text) {
+  const dot = document.getElementById('syncDot');
+  const textEl = document.getElementById('syncText');
+  dot.className = 'sync-dot ' + status;
+  textEl.textContent = text;
+}
+
+async function syncToGitHub() {
+  if (!githubConfig || !githubConfig.token) return;
+  
+  setSyncStatus('syncing', 'Сохранение...');
+  
+  try {
+    const { token, user, repo, filePath } = githubConfig;
+    
+    let currentSha = null;
+    try {
+      const getResponse = await fetch(
+        `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`,
+        { headers: { 'Authorization': `token ${token}` } }
+      );
+      
+      if (getResponse.ok) {
+        const getData = await getResponse.json();
+        currentSha = getData.sha;
+      } else if (getResponse.status === 404) {
+        console.log('Файл не найден, будет создан новый');
+      } else if (getResponse.status === 401) {
+        throw new Error('Неверный токен. Проверьте Personal Access Token.');
+      } else if (getResponse.status === 403) {
+        throw new Error('Доступ запрещён. Токен не имеет прав к этому репозиторию.');
+      } else {
+        throw new Error(`Ошибка GitHub: ${getResponse.status}`);
+      }
+    } catch (e) {
+      if (e.message.includes('Неверный') || e.message.includes('Доступ')) throw e;
+    }
+    
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))));
+    
+    const body = {
+      message: `Update orders data - ${new Date().toLocaleString('ru-RU')}`,
+      content: content,
+    };
+    
+    if (currentSha) {
+      body.sha = currentSha;
+    }
+    
+    const response = await fetch(
+      `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      }
+    );
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error(
+          `Репозиторий не найден: ${user}/${repo}\n\n` +
+          `Проверьте:\n` +
+          `1. Правильность имени пользователя\n` +
+          `2. Правильность названия репозитория\n` +
+          `3. Что токен имеет доступ к этому репозиторию`
+        );
+      } else if (response.status === 401) {
+        throw new Error('Неверный токен доступа. Создайте новый токен.');
+      } else if (response.status === 403) {
+        throw new Error('Доступ запрещён. Убедитесь, что токен имеет права "repo".');
+      } else if (response.status === 422) {
+        throw new Error('Ошибка валидации. Возможно, файл был изменён в другом месте.');
+      }
+      throw new Error(`Ошибка GitHub: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    fileSha = data.content.sha;
+    
+    setSyncStatus('', 'Синхронизировано');
+    toast('✓ Данные сохранены в GitHub', 'success');
+    
+  } catch (error) {
+    console.error('Sync error:', error);
+    setSyncStatus('error', 'Ошибка');
+    toast('❌ ' + error.message, 'error');
+  }
+}
+
+async function loadFromGitHub() {
+  if (!githubConfig || !githubConfig.token) return;
+  
+  setSyncStatus('syncing', 'Загрузка...');
+  
+  try {
+    const { token, user, repo, filePath } = githubConfig;
+    const url = `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`;
+    
+    const response = await fetch(url, {
+      headers: { 'Authorization': `token ${token}` }
+    });
+    
+    if (response.status === 404) {
+      setSyncStatus('', 'Готово (нет данных)');
+      toast('ℹ️ Файл данных не найден. Он будет создан при первом сохранении.', 'info');
+      return;
+    }
+    
+    if (response.status === 401) {
+      throw new Error('Неверный токен доступа');
+    }
+    
+    if (response.status === 403) {
+      throw new Error('Доступ запрещён. Проверьте права токена.');
+    }
+    
+    if (!response.ok) {
+      throw new Error(`Ошибка GitHub: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    fileSha = data.sha;
+    
+    const content = decodeURIComponent(escape(atob(data.content)));
+    orders = JSON.parse(content);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    
+    setSyncStatus('', 'Синхронизировано');
+    renderDashboard();
+    renderRegistry();
+    toast('✓ Данные загружены из GitHub', 'success');
+    
+  } catch (error) {
+    console.error('Load error:', error);
+    setSyncStatus('error', 'Ошибка');
+    toast('❌ ' + error.message, 'error');
+  }
+}
+
+async function testConnection() {
+  const token = document.getElementById('githubToken').value.trim();
+  const user = document.getElementById('githubUser').value.trim();
+  const repo = document.getElementById('githubRepo').value.trim();
+  const filePath = document.getElementById('githubFilePath').value.trim() || 'data.json';
+  
+  if (!token || !user || !repo) {
+    toast('Заполните все обязательные поля', 'error');
+    return;
+  }
+  
+  setSyncStatus('syncing', 'Проверка...');
+  let report = [];
+  
+  try {
+    const userResponse = await fetch(`https://api.github.com/users/${user}`, {
+      headers: { 'Authorization': `token ${token}` }
+    });
+    
+    if (userResponse.status === 401) {
+      throw new Error('❌ Неверный токен. Создайте новый на github.com/settings/tokens');
+    }
+    
+    if (userResponse.status === 404) {
+      throw new Error(`❌ Пользователь "${user}" не найден. Проверьте имя.`);
+    }
+    
+    if (!userResponse.ok) {
+      throw new Error(`Ошибка проверки пользователя: ${userResponse.status}`);
+    }
+    
+    const userData = await userResponse.json();
+    report.push(`✓ Пользователь: ${userData.login}`);
+    
+    const repoResponse = await fetch(`https://api.github.com/repos/${user}/${repo}`, {
+      headers: { 'Authorization': `token ${token}` }
+    });
+    
+    if (repoResponse.status === 404) {
+      throw new Error(
+        `❌ Репозиторий "${user}/${repo}" не найден.\n\n` +
+        `Создайте его: github.com/new\n` +
+        `Или проверьте правильность названия (учитывайте регистр!).`
+      );
+    }
+    
+    if (!repoResponse.ok) {
+      throw new Error(`Ошибка проверки репозитория: ${repoResponse.status}`);
+    }
+    
+    const repoData = await repoResponse.json();
+    report.push(`✓ Репозиторий: ${repoData.full_name} (${repoData.private ? 'приватный' : 'публичный'})`);
+    
+    const fileResponse = await fetch(
+      `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`,
+      { headers: { 'Authorization': `token ${token}` } }
+    );
+    
+    if (fileResponse.status === 404) {
+      report.push(`⚠ Файл "${filePath}" не найден. Будет создан автоматически.`);
+    } else if (fileResponse.ok) {
+      report.push(`✓ Файл "${filePath}" существует`);
+    } else {
+      report.push(`⚠ Ошибка проверки файла: ${fileResponse.status}`);
+    }
+    
+    setSyncStatus('', 'Подключено');
+    toast('✓ ' + report.join(' | '), 'success');
+    
+    githubConfig = { token, user, repo, filePath };
+    localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(githubConfig));
+    
+  } catch (error) {
+    setSyncStatus('error', 'Ошибка');
+    toast(error.message, 'error');
+  }
+}
+
+function exportToOutlook(idx, type = 'task') {
+  const o = orders[idx];
+  
+  if (type === 'task') {
+    exportAsTask(o);
+  } else {
+    exportAsEvent(o);
+  }
+}
+
+function exportAsTask(order) {
+  const dtStart = formatDateForICS(order.createdDate);
+  const dtDue = formatDateForICS(order.deadline);
+  
+  let description = `Поручение: ${order.id}\n`;
+  description += `Источник: ${order.source}\n`;
+  description += `Инициатор: ${order.initiator}\n`;
+  description += `Контролёр: ${order.controller || 'Не указан'}\n`;
+  description += `Приоритет: ${order.priority}\n`;
+  description += `Статус: ${order.status}\n\n`;
+  description += `Описание:\n${order.text}\n\n`;
+  if (order.comment) {
+    description += `Комментарий:\n${order.comment}\n`;
+  }
+  
+  const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Executive Control//RU
+BEGIN:VTODO
+UID:${order.id}-${Date.now()}@executive-control
+DTSTAMP:${formatDateTimeForICS(new Date())}
+DTSTART:${dtStart}
+DUE:${dtDue}
+SUMMARY:${escapeICS(order.text)}
+DESCRIPTION:${escapeICS(description)}
+PRIORITY:${order.priority === 'Высокий' ? 1 : order.priority === 'Средний' ? 5 : 9}
+STATUS:${order.status === 'Выполнено' ? 'COMPLETED' : 'NEEDS-ACTION'}
+END:VTODO
+END:VCALENDAR`;
+
+  downloadICS(ics, `task_${order.id}.ics`);
+  toast('Задача экспортирована в Outlook', 'success');
+}
+
+function exportAsEvent(order) {
+  const dtStart = formatDateForICS(order.deadline) + 'T090000';
+  const dtEnd = formatDateForICS(order.deadline) + 'T100000';
+  
+  let description = `Поручение: ${order.id}\n`;
+  description += `Ответственный: ${order.responsible}\n`;
+  description += `Источник: ${order.source}\n`;
+  description += `Инициатор: ${order.initiator}\n`;
+  description += `Приоритет: ${order.priority}\n\n`;
+  description += `Описание:\n${order.text}\n`;
+  
+  const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Executive Control//RU
+BEGIN:VEVENT
+UID:${order.id}-${Date.now()}@executive-control
+DTSTAMP:${formatDateTimeForICS(new Date())}
+DTSTART:${dtStart}
+DTEND:${dtEnd}
+SUMMARY:${escapeICS(order.text)}
+DESCRIPTION:${escapeICS(description)}
+PRIORITY:${order.priority === 'Высокий' ? 1 : order.priority === 'Средний' ? 5 : 9}
+END:VEVENT
+END:VCALENDAR`;
+
+  downloadICS(ics, `event_${order.id}.ics`);
+  toast('Событие экспортировано в Outlook', 'success');
+}
+
+function formatDateForICS(dateStr) {
+  const d = new Date(dateStr);
+  return d.getFullYear() + 
+         String(d.getMonth() + 1).padStart(2, '0') + 
+         String(d.getDate()).padStart(2, '0');
+}
+
+function formatDateTimeForICS(date) {
+  return date.getFullYear() + 
+         String(date.getMonth() + 1).padStart(2, '0') + 
+         String(date.getDate()).padStart(2, '0') + 'T' +
+         String(date.getHours()).padStart(2, '0') + 
+         String(date.getMinutes()).padStart(2, '0') + 
+         String(date.getSeconds()).padStart(2, '0');
+}
+
+function escapeICS(str) {
+  return str.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+}
+
+function downloadICS(content, filename) {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function openSettings() {
+  if (githubConfig) {
+    document.getElementById('githubToken').value = githubConfig.token || '';
+    document.getElementById('githubUser').value = githubConfig.user || '';
+    document.getElementById('githubRepo').value = githubConfig.repo || '';
+    document.getElementById('githubFilePath').value = githubConfig.filePath || 'data.json';
+  }
+  document.getElementById('settingsModal').classList.add('show');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('show');
+}
+
+function saveSettings() {
+  githubConfig = {
+    token: document.getElementById('githubToken').value.trim(),
+    user: document.getElementById('githubUser').value.trim(),
+    repo: document.getElementById('githubRepo').value.trim(),
+    filePath: document.getElementById('githubFilePath').value.trim() || 'data.json'
+  };
+  
+  if (!githubConfig.token || !githubConfig.user || !githubConfig.repo) {
+    toast('Заполните все обязательные поля', 'error');
+    return;
+  }
+  
+  localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(githubConfig));
+  closeSettings();
+  toast('Настройки сохранены', 'success');
+  
+  loadFromGitHub();
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['dashboard','registry','form'][i] === name));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'registry') renderRegistry();
+}
+
+function toast(msg, type='success') {
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.innerHTML = `<svg><use href="#icon-${type === 'success' ? 'check' : type === 'error' ? 'alert' : 'sync'}"/></svg><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+
+function saveOrder(e) {
+  e.preventDefault();
+  const order = {
+    id: genId(),
+    createdDate: today(),
+    text: document.getElementById('fText').value.trim(),
+    source: document.getElementById('fSource').value,
+    initiator: document.getElementById('fInitiator').value.trim(),
+    responsible: document.getElementById('fResponsible').value.trim(),
+    controller: document.getElementById('fController').value.trim(),
+    deadline: document.getElementById('fDeadline').value,
+    priority: document.getElementById('fPriority').value,
+    status: 'Новое',
+    comment: document.getElementById('fComment').value.trim(),
+    actualDate: null,
+    tasks: []
+  };
+  orders.push(order);
+  save();
+  document.getElementById('orderForm').reset();
+  toast('Поручение ' + order.id + ' создано');
+  switchTab('registry');
+  return false;
+}
+
+function statusBadge(s) {
+  const map = {'Новое':'badge-new','В работе':'badge-progress','На проверке':'badge-review','На доработке':'badge-revision','Выполнено':'badge-done','Отменено':'badge-cancelled','Просрочено':'badge-overdue'};
+  return `<span class="badge ${map[s]||'badge-new'}">${s}</span>`;
+}
+function priorityClass(p) {
+  return p==='Высокий'?'priority-high':p==='Средний'?'priority-medium':'priority-low';
+}
+
+function renderRegistry() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const fStatus = document.getElementById('filterStatus').value;
+  const fPriority = document.getElementById('filterPriority').value;
+
+  let filtered = orders.filter(o => {
+    if (search && !(o.text.toLowerCase().includes(search) || o.id.toLowerCase().includes(search) || o.responsible.toLowerCase().includes(search))) return false;
+    if (fStatus) {
+      if (fStatus === 'Просрочено') { if (!isOverdue(o)) return false; }
+      else { if (o.status !== fStatus) return false; }
+    }
+    if (fPriority && o.priority !== fPriority) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    let va = a[sortField], vb = b[sortField];
+    if (sortField === 'priority') { const m = {'Высокий':3,'Средний':2,'Низкий':1}; va=m[va]; vb=m[vb]; }
+    if (va < vb) return -1 * sortDir;
+    if (va > vb) return 1 * sortDir;
+    return 0;
+  });
+
+  const tbody = document.getElementById('registryBody');
+  const empty = document.getElementById('emptyState');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map((o, i) => {
+    const days = daysDiff(o.deadline);
+    const overdue = isOverdue(o);
+    const risk = isRisk(o);
+    const rowClass = overdue ? 'row-overdue' : risk ? 'row-risk' : o.status === 'Выполнено' ? 'row-done' : '';
+    const daysText = days !== null ? (days < 0 ? `<span style="color:var(--danger);font-weight:700">${days} дн.</span>` : days <= 3 ? `<span style="color:var(--warning);font-weight:600">${days} дн.</span>` : `${days} дн.`) : '—';
+    const displayStatus = overdue ? 'Просрочено' : o.status;
+    const idx = orders.indexOf(o);
+    const progress = getTaskProgress(o);
+    const hasTasks = progress.total > 0;
+
+    return `<tr class="${rowClass}">
+      <td><strong>${o.id}</strong></td>
+      <td>${o.createdDate}</td>
+      <td style="max-width:280px;">${o.text}</td>
+      <td>${o.source}</td>
+      <td>${o.responsible}</td>
+      <td>${o.controller || '—'}</td>
+      <td>${o.deadline}</td>
+      <td>${daysText}</td>
+      <td>
+        ${hasTasks ? `
+          <div class="progress-bar">
+            <div class="progress-track">
+              <div class="progress-fill" style="width:${progress.percent}%;background:${progress.percent === 100 ? 'var(--success)' : progress.percent >= 50 ? 'var(--warning)' : 'var(--danger)'}"></div>
+            </div>
+            <span>${progress.completed}/${progress.total}</span>
+          </div>
+        ` : '<span style="color:var(--gray-400);font-size:12px;">Нет задач</span>'}
+      </td>
+      <td>${statusBadge(displayStatus)}</td>
+      <td><span class="${priorityClass(o.priority)}">${o.priority}</span></td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="openEdit(${idx})" title="Редактировать">
+          <svg><use href="#icon-edit"/></svg>
+        </button>
+        <button class="btn btn-info btn-sm" onclick="openTasksModal(${idx})" title="Задачи">
+          <svg><use href="#icon-tasks"/></svg>
+          ${hasTasks ? progress.total : 'Задачи'}
+        </button>
+        <button class="btn btn-outlook btn-sm" onclick="exportToOutlook(${idx}, 'task')" title="Экспорт в Outlook (Задача)">
+          <svg><use href="#icon-outlook"/></svg>
+          Задача
+        </button>
+        <button class="btn btn-outlook btn-sm" onclick="exportToOutlook(${idx}, 'event')" title="Экспорт в Outlook (Событие)">
+          <svg><use href="#icon-outlook"/></svg>
+          Событие
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="deleteOrder(${idx})" title="Удалить">
+          <svg><use href="#icon-delete"/></svg>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function sortTable(field) {
+  if (sortField === field) sortDir *= -1;
+  else { sortField = field; sortDir = 1; }
+  renderRegistry();
+}
+
+function deleteOrder(idx) {
+  if (confirm('Удалить поручение ' + orders[idx].id + '?')) {
+    orders.splice(idx, 1);
+    save();
+    renderRegistry();
+    toast('Поручение удалено', 'error');
+  }
+}
+
+function openEdit(idx) {
+  const o = orders[idx];
+  document.getElementById('eIdx').value = idx;
+  document.getElementById('editId').textContent = o.id;
+  document.getElementById('eText').value = o.text;
+  document.getElementById('eResponsible').value = o.responsible;
+  document.getElementById('eController').value = o.controller;
+  document.getElementById('eDeadline').value = o.deadline;
+  document.getElementById('ePriority').value = o.priority;
+  document.getElementById('eStatus').value = o.status;
+  document.getElementById('eActualDate').value = o.actualDate || '';
+  document.getElementById('eComment').value = o.comment;
+  document.getElementById('editModal').classList.add('show');
+}
+function closeModal() { document.getElementById('editModal').classList.remove('show'); }
+function updateOrder(e) {
+  e.preventDefault();
+  const idx = parseInt(document.getElementById('eIdx').value);
+  orders[idx].text = document.getElementById('eText').value.trim();
+  orders[idx].responsible = document.getElementById('eResponsible').value.trim();
+  orders[idx].controller = document.getElementById('eController').value.trim();
+  orders[idx].deadline = document.getElementById('eDeadline').value;
+  orders[idx].priority = document.getElementById('ePriority').value;
+  orders[idx].status = document.getElementById('eStatus').value;
+  orders[idx].actualDate = document.getElementById('eActualDate').value || null;
+  orders[idx].comment = document.getElementById('eComment').value.trim();
+  if (orders[idx].status === 'Выполнено' && !orders[idx].actualDate) orders[idx].actualDate = today();
+  save();
+  closeModal();
+  renderRegistry();
+  toast('Поручение ' + orders[idx].id + ' обновлено');
+  return false;
+}
+
+function openTasksModal(idx) {
+  currentTasksOrderId = idx;
+  const o = orders[idx];
+  document.getElementById('tasksOrderId').textContent = o.id;
+  renderTasksList();
+  document.getElementById('tasksModal').classList.add('show');
+}
+
+function closeTasksModal() {
+  document.getElementById('tasksModal').classList.remove('show');
+  currentTasksOrderId = null;
+  document.getElementById('newTaskText').value = '';
+  document.getElementById('newTaskAssignee').value = '';
+  document.getElementById('newTaskDeadline').value = '';
+}
+
+function renderTasksList() {
+  const o = orders[currentTasksOrderId];
+  const container = document.getElementById('tasksList');
+  
+  if (!o.tasks || o.tasks.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:30px;">Задач пока нет. Добавьте первую задачу ниже.</p>';
+    return;
+  }
+
+  container.innerHTML = o.tasks.map((task, i) => `
+    <div class="task-item ${task.completed ? 'completed' : ''}">
+      <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${i})">
+      <div class="task-info">
+        <div class="task-title">${task.text}</div>
+        <div class="task-meta">
+          ${task.assignee ? `<span>👤 ${task.assignee}</span>` : ''}
+          ${task.deadline ? `<span>📅 ${task.deadline}</span>` : ''}
+          ${task.completed && task.completedDate ? `<span>✅ ${task.completedDate}</span>` : ''}
+        </div>
+      </div>
+      <div class="task-actions">
+        <button class="btn btn-danger btn-sm" onclick="deleteTask(${i})">
+          <svg><use href="#icon-delete"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addTask() {
+  const text = document.getElementById('newTaskText').value.trim();
+  const assignee = document.getElementById('newTaskAssignee').value.trim();
+  const deadline = document.getElementById('newTaskDeadline').value;
+
+  if (!text) {
+    toast('Введите текст задачи', 'error');
+    return;
+  }
+
+  const o = orders[currentTasksOrderId];
+  if (!o.tasks) o.tasks = [];
+  
+  o.tasks.push({
+    text: text,
+    assignee: assignee,
+    deadline: deadline,
+    completed: false,
+    completedDate: null,
+    createdDate: today()
+  });
+
+  save();
+  renderTasksList();
+  
+  document.getElementById('newTaskText').value = '';
+  document.getElementById('newTaskAssignee').value = '';
+  document.getElementById('newTaskDeadline').value = '';
+  
+  toast('Задача добавлена');
+}
+
+function toggleTask(taskIdx) {
+  const o = orders[currentTasksOrderId];
+  o.tasks[taskIdx].completed = !o.tasks[taskIdx].completed;
+  o.tasks[taskIdx].completedDate = o.tasks[taskIdx].completed ? today() : null;
+  save();
+  renderTasksList();
+  renderRegistry();
+}
+
+function deleteTask(taskIdx) {
+  if (!confirm('Удалить задачу?')) return;
+  const o = orders[currentTasksOrderId];
+  o.tasks.splice(taskIdx, 1);
+  save();
+  renderTasksList();
+  renderRegistry();
+  toast('Задача удалена', 'error');
+}
+
+function renderDashboard() {
+  const active = orders.filter(o => !['Выполнено','Отменено'].includes(o.status));
+  const overdue = active.filter(o => daysDiff(o.deadline) < 0);
+  const risk = active.filter(o => { const d = daysDiff(o.deadline); return d >= 0 && d <= 3; });
+  const done = orders.filter(o => o.status === 'Выполнено');
+  const onTime = done.filter(o => o.actualDate && o.deadline && o.actualDate <= o.deadline);
+  const discipline = done.length > 0 ? Math.round(onTime.length / done.length * 100) : 0;
+
+  let totalTasks = 0;
+  let completedTasks = 0;
+  orders.forEach(o => {
+    if (o.tasks) {
+      totalTasks += o.tasks.length;
+      completedTasks += o.tasks.filter(t => t.completed).length;
+    }
+  });
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi-card total">
+      <div class="kpi-header">
+        <svg class="kpi-icon"><use href="#icon-total"/></svg>
+        <div class="kpi-label">Всего</div>
+      </div>
+      <div class="kpi-value">${orders.length}</div>
+    </div>
+    <div class="kpi-card progress">
+      <div class="kpi-header">
+        <svg class="kpi-icon"><use href="#icon-progress"/></svg>
+        <div class="kpi-label">В работе</div>
+      </div>
+      <div class="kpi-value">${active.length}</div>
+    </div>
+    <div class="kpi-card overdue">
+      <div class="kpi-header">
+        <svg class="kpi-icon"><use href="#icon-overdue"/></svg>
+        <div class="kpi-label">Просрочено</div>
+      </div>
+      <div class="kpi-value">${overdue.length}</div>
+    </div>
+    <div class="kpi-card risk">
+      <div class="kpi-header">
+        <svg class="kpi-icon"><use href="#icon-risk"/></svg>
+        <div class="kpi-label">Риск</div>
+      </div>
+      <div class="kpi-value">${risk.length}</div>
+    </div>
+    <div class="kpi-card done">
+      <div class="kpi-header">
+        <svg class="kpi-icon"><use href="#icon-done"/></svg>
+        <div class="kpi-label">Выполнено</div>
+      </div>
+      <div class="kpi-value">${done.length}</div>
+    </div>
+    <div class="kpi-card done">
+      <div class="kpi-header">
+        <svg class="kpi-icon"><use href="#icon-check"/></svg>
+        <div class="kpi-label">Дисциплина</div>
+      </div>
+      <div class="kpi-value">${discipline}%</div>
+    </div>
+    <div class="kpi-card total">
+      <div class="kpi-header">
+        <svg class="kpi-icon"><use href="#icon-tasks"/></svg>
+        <div class="kpi-label">Задач</div>
+      </div>
+      <div class="kpi-value">${totalTasks}</div>
+    </div>
+    <div class="kpi-card done">
+      <div class="kpi-header">
+        <svg class="kpi-icon"><use href="#icon-done"/></svg>
+        <div class="kpi-label">Задач ✓</div>
+      </div>
+      <div class="kpi-value">${completedTasks}</div>
+    </div>
+  `;
+
+  const riskItems = orders.filter(o => isOverdue(o) || isRisk(o)).sort((a,b) => daysDiff(a.deadline) - daysDiff(b.deadline));
+  document.getElementById('riskTableBody').innerHTML = riskItems.length === 0
+    ? '<tr><td colspan="7" style="text-align:center;color:var(--gray-500);padding:40px;">Нет просроченных или рисковых поручений</td></tr>'
+    : riskItems.map(o => {
+      const d = daysDiff(o.deadline);
+      const cls = d < 0 ? 'row-overdue' : 'row-risk';
+      return `<tr class="${cls}"><td><strong>${o.id}</strong></td><td>${o.text}</td><td>${o.responsible}</td><td>${o.deadline}</td><td style="font-weight:700;color:${d<0?'var(--danger)':'var(--warning)'}">${d} дн.</td><td>${statusBadge(d<0?'Просрочено':o.status)}</td><td><span class="${priorityClass(o.priority)}">${o.priority}</span></td></tr>`;
+    }).join('');
+
+  renderCharts();
+}
+
+function renderCharts() {
+  const statusCounts = {};
+  const priorityCounts = {'Высокий':0,'Средний':0,'Низкий':0};
+  const sourceCounts = {};
+  const respStats = {};
+
+  orders.forEach(o => {
+    const s = isOverdue(o) ? 'Просрочено' : o.status;
+    statusCounts[s] = (statusCounts[s]||0) + 1;
+    priorityCounts[o.priority] = (priorityCounts[o.priority]||0) + 1;
+    sourceCounts[o.source] = (sourceCounts[o.source]||0) + 1;
+    if (!respStats[o.responsible]) respStats[o.responsible] = {total:0, onTime:0};
+    respStats[o.responsible].total++;
+    if (o.status === 'Выполнено' && o.actualDate && o.deadline && o.actualDate <= o.deadline) respStats[o.responsible].onTime++;
+  });
+
+  const statusColors = {'Новое':'#2563eb','В работе':'#6366f1','На проверке':'#f59e0b','На доработке':'#ec4899','Выполнено':'#16a34a','Отменено':'#9ca3af','Просрочено':'#dc2626'};
+
+  renderDonutChart('chartStatus', statusCounts, statusColors);
+  
+  const priorityColors = {'Высокий':'#dc2626','Средний':'#f59e0b','Низкий':'#16a34a'};
+  renderDonutChart('chartPriority', priorityCounts, priorityColors);
+
+  renderBarChart('chartResponsible', respStats);
+  renderHBarChart('chartSource', sourceCounts);
+}
+
+function renderDonutChart(containerId, data, colors) {
+  const container = document.getElementById(containerId);
+  const total = Object.values(data).reduce((a, b) => a + b, 0);
+  if (total === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>';
+    return;
+  }
+
+  const radius = 70;
+  const circumference = 2 * Math.PI * radius;
+  let offset = 0;
+  let segments = '';
+
+  Object.entries(data).forEach(([label, value]) => {
+    const percent = value / total;
+    const length = percent * circumference;
+    const color = colors[label] || '#999';
+    segments += `<circle cx="90" cy="90" r="${radius}" fill="none" stroke="${color}" stroke-width="25" stroke-dasharray="${length} ${circumference}" stroke-dashoffset="${-offset}" />`;
+    offset += length;
+  });
+
+  const legend = Object.entries(data).map(([label, value]) => {
+    const percent = Math.round(value / total * 100);
+    const color = colors[label] || '#999';
+    return `<div class="legend-item"><div class="legend-color" style="background:${color}"></div>${label}: ${value} (${percent}%)</div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="donut-chart">
+      <svg width="180" height="180">
+        ${segments}
+      </svg>
+      <div class="donut-center">
+        <div class="value">${total}</div>
+        <div class="label">всего</div>
+      </div>
+    </div>
+    <div class="donut-legend">${legend}</div>
+  `;
+}
+
+function renderBarChart(containerId, data) {
+  const container = document.getElementById(containerId);
+  const entries = Object.entries(data);
+  if (entries.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>';
+    return;
+  }
+
+  const bars = entries.map(([label, stats]) => {
+    const percent = stats.total > 0 ? Math.round(stats.onTime / stats.total * 100) : 0;
+    const color = percent >= 80 ? '#16a34a' : percent >= 50 ? '#f59e0b' : '#dc2626';
+    return `
+      <div class="bar-item">
+        <div class="bar-label">${label}</div>
+        <div class="bar-container">
+          <div class="bar-fill" style="width:${percent}%;background:${color}">
+            <span class="bar-value">${percent}%</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `<div class="bar-chart">${bars}</div>`;
+}
+
+function renderHBarChart(containerId, data) {
+  const container = document.getElementById(containerId);
+  const entries = Object.entries(data);
+  if (entries.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:40px;">Нет данных</p>';
+    return;
+  }
+
+  const max = Math.max(...Object.values(data));
+  const bars = entries.map(([label, value]) => {
+    const percent = (value / max) * 100;
+    return `
+      <div class="h-bar-item">
+        <div class="h-bar-label">${label}</div>
+        <div class="h-bar-container">
+          <div class="h-bar-fill" style="width:${percent}%;background:#6366f1"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `<div class="h-bar-chart">${bars}</div>`;
+}
+
+function exportCSV() {
+  const headers = ['ID','Дата','Текст','Источник','Инициатор','Ответственный','Контролёр','Срок','Статус','Приоритет','Кол-во задач','Выполнено задач','Комментарий'];
+  const rows = orders.map(o => {
+    const progress = getTaskProgress(o);
+    return [o.id, o.createdDate, `"${o.text}"`, o.source, o.initiator, o.responsible, o.controller, o.deadline, o.status, o.priority, progress.total, progress.completed, `"${o.comment}"`];
+  });
+  const csv = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'registry_' + today() + '.csv';
+  a.click();
+  toast('CSV экспортирован');
+}
+
+function loadDemo() {
+  if (orders.length > 0) return;
+  const demo = [
+    {text:'Подготовить отчёт по результатам внутреннего аудита СМК',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Петров С.В.',controller:'Козлова Е.Н.',deadline:'2026-01-20',priority:'Высокий',status:'В работе',comment:'',tasks:[
+      {text:'Собрать данные по всем подразделениям',assignee:'Сидоров А.П.',deadline:'2026-01-15',completed:true,completedDate:'2026-01-14',createdDate:'2026-01-10'},
+      {text:'Подготовить сводную таблицу',assignee:'Петров С.В.',deadline:'2026-01-18',completed:false,completedDate:null,createdDate:'2026-01-10'},
+      {text:'Согласовать с Директором по качеству',assignee:'Козлова Е.Н.',deadline:'2026-01-19',completed:false,completedDate:null,createdDate:'2026-01-10'}
+    ]},
+    {text:'Разработать корректирующее действие по несоответствию №2025-047',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Сидоров А.П.',controller:'Козлова Е.Н.',deadline:'2026-01-15',priority:'Высокий',status:'На проверке',comment:'Отчёт приложен',tasks:[
+      {text:'Провести анализ корневых причин',assignee:'Сидоров А.П.',deadline:'2026-01-12',completed:true,completedDate:'2026-01-11',createdDate:'2026-01-08'},
+      {text:'Разработать план мероприятий',assignee:'Сидоров А.П.',deadline:'2026-01-14',completed:true,completedDate:'2026-01-13',createdDate:'2026-01-08'}
+    ]},
+    {text:'Обновить процедуру управления документированной информацией',source:'Протокол совещания',initiator:'Директор',responsible:'Козлова Е.Н.',controller:'',deadline:'2026-02-01',priority:'Средний',status:'Новое',comment:'',tasks:[]},
+    {text:'Провести обучение сотрудников по новой версии ISO 9001:2015',source:'Проект',initiator:'Иванова М.А.',responsible:'Морозов Д.И.',controller:'Козлова Е.Н.',deadline:'2026-02-15',priority:'Средний',status:'В работе',comment:'',tasks:[
+      {text:'Подготовить учебные материалы',assignee:'Морозов Д.И.',deadline:'2026-02-01',completed:false,completedDate:null,createdDate:'2026-01-12'},
+      {text:'Согласовать программу обучения',assignee:'Козлова Е.Н.',deadline:'2026-02-05',completed:false,completedDate:null,createdDate:'2026-01-12'},
+      {text:'Провести обучение',assignee:'Морозов Д.И.',deadline:'2026-02-14',completed:false,completedDate:null,createdDate:'2026-01-12'}
+    ]},
+    {text:'Устранить замечания по пожарной безопасности (предписание №12)',source:'Входящий документ',initiator:'Директор',responsible:'Волков И.К.',controller:'',deadline:'2026-01-10',priority:'Высокий',status:'Выполнено',comment:'Все замечания устранены',actualDate:'2026-01-09',tasks:[
+      {text:'Заменить огнетушители',assignee:'Волков И.К.',deadline:'2026-01-08',completed:true,completedDate:'2026-01-07',createdDate:'2026-01-05'},
+      {text:'Обновить планы эвакуации',assignee:'Волков И.К.',deadline:'2026-01-09',completed:true,completedDate:'2026-01-08',createdDate:'2026-01-05'}
+    ]},
+    {text:'Подготовить презентацию для совета директоров по качеству',source:'Устное распоряжение',initiator:'Директор',responsible:'Петров С.В.',controller:'Иванова М.А.',deadline:'2026-01-25',priority:'Средний',status:'В работе',comment:'',tasks:[]},
+    {text:'Внедрить чек-лист входного контроля материалов',source:'Проект',initiator:'Иванова М.А.',responsible:'Новиков Р.С.',controller:'Козлова Е.Н.',deadline:'2026-03-01',priority:'Низкий',status:'Новое',comment:'',tasks:[]},
+    {text:'Проанализировать рекламации за 4 квартал 2025',source:'Аудит / Рекламация',initiator:'Иванова М.А.',responsible:'Сидоров А.П.',controller:'',deadline:'2026-01-18',priority:'Высокий',status:'Выполнено',comment:'Анализ проведён, 3 корневых причины выявлены',actualDate:'2026-01-20',tasks:[
+      {text:'Выгрузить данные из CRM',assignee:'Сидоров А.П.',deadline:'2026-01-15',completed:true,completedDate:'2026-01-14',createdDate:'2026-01-10'},
+      {text:'Провести классификацию рекламаций',assignee:'Сидоров А.П.',deadline:'2026-01-17',completed:true,completedDate:'2026-01-16',createdDate:'2026-01-10'},
+      {text:'Подготовить отчёт с выводами',assignee:'Сидоров А.П.',deadline:'2026-01-18',completed:true,completedDate:'2026-01-19',createdDate:'2026-01-10'}
+    ]},
+  ];
+  demo.forEach((d, i) => {
+    orders.push({
+      id: 'П-' + String(i+1).padStart(4,'0'),
+      createdDate: '2026-01-0' + (i < 9 ? i+1 : 9),
+      ...d,
+      actualDate: d.actualDate || null,
+      tasks: d.tasks || []
+    });
+  });
+  save();
+}
+
+loadDemo();
+renderDashboard();
+
+if (githubConfig && githubConfig.token) {
+  loadFromGitHub();
+}
+</script>
+</body>
+</html>
